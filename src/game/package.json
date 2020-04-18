@@ -16,6 +16,7 @@
     "decamelize": "^4.0.0",
     "lodash": "^4.17.15",
     "pixi.js": "^5.2.1",
+    "game": "file:index.js",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-router-dom": "^5.1.2",
