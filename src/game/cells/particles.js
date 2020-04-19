@@ -1,6 +1,7 @@
 import {randGen, VELOCITY_MULT} from '../constants'
 import Prob from 'prob.js'
 import {typeIds} from './types'
+import {Sprite} from 'pixi.js'
 
 let id = 1
 
@@ -40,6 +41,7 @@ export class Particles {
                 rotation: 1.1,
                 tick: 'move',
                 collide: 'collide',
+                sprite: new Sprite(),
             }
         }
         this.length++

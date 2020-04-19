@@ -1,9 +1,9 @@
 import Prob from 'prob.js'
 import {fromHSV, resizeArray} from '../lib'
 import {DIAMETER, presets, randGen} from '../constants'
-import virus from './sprites/mainvirus_bad.2.png'
 import cell from './sprites/red_cell.png'
 import nucleus from './sprites/good_cell01.png'
+import {images} from './sprites'
 
 export const types = {
     nucleus: {
@@ -50,7 +50,6 @@ function getTypeIds(types) {
     return result
 }
 
-const images = [virus, cell, nucleus]
 export class ParticleTypes {
     constructor(size = 0) {
         this.colour = Array.from({ length: size }, () => ({ r: 0, g: 0, b: 0, a: 0 }))
