@@ -51,18 +51,20 @@ export function CellSelector({ value, onChange, good }) {
                                 <Box height={64} clone>
                                     <CardMedia className={classes.contain} image={type.sprite} />
                                 </Box>
-                                <CardHeader title={type.name} />
+                                <CardHeader
+                                    title={type.name}
+                                    subheader={
+                                        type.cost && (
+                                            <Typography color={'primary'} variant={'caption'}>
+                                                {type.cost} credits
+                                            </Typography>
+                                        )
+                                    }
+                                />
                                 <CardContent>
                                     <Box>
                                         <Typography variant={'body2'}>{type.description}</Typography>
                                     </Box>
-                                    {type.cost && (
-                                        <Box mt={2}>
-                                            <Typography color={'primary'} variant={'caption'}>
-                                                {type.cost} credits
-                                            </Typography>
-                                        </Box>
-                                    )}
                                 </CardContent>
                             </Card>
                         </Box>

@@ -1,5 +1,8 @@
 import {MersenneTwister19937, Random} from 'random-js'
 
+export const GAME_WIDTH = 2048
+export const GAME_HEIGHT = 1024
+
 export const RADIUS = 10
 export const DIAMETER = 2.0 * RADIUS
 export const presets = {
