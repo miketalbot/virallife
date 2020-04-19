@@ -20,7 +20,11 @@ function GameRender() {
     const items = raise('game-elements', [])
     const particles = raise('particle-elements', [])
     return (
-        <Stage width={Math.min(1280, window.innerWidth - 50)} height={500}>
+        <Stage
+            width={Math.min(1280, window.innerWidth - 50)}
+            height={500}
+            options={{ resolution: window.devicePixelRatio, autoDensity: true }}
+        >
             <Container>
                 {items.map((Item, index) => (
                     <Item key={index} />

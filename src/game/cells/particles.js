@@ -17,7 +17,7 @@ export class Particles {
                 y: 0,
                 vx: 0,
                 vy: 0,
-                type: '',
+                type: 0,
                 id: id++,
             }
         }

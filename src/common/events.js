@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import {useEffect} from 'react'
 
 import events from 'alcumus-local-events'
 
@@ -15,13 +15,7 @@ export function handle(type, fn) {
         let props = methods(type)
         for (let [definedType, fn] of props) {
             const toProcessType = clean(definedType)
-            const handler = function(event, ...params) {
-                let result = fn.call(type, ...params)
-                if (result === false) {
-                    event.preventDefault()
-                }
-                return result
-            }
+            const handler = createHandler(fn)
             pairs.push([toProcessType, handler])
             events.on(toProcessType, handler)
             result[definedType] = declareAsync(definedType)
@@ -39,6 +33,16 @@ export function handle(type, fn) {
         events.on(type, handler)
     }
     return result
+
+    function createHandler(fn) {
+        return function(event, ...params) {
+            let result = fn.call(type, ...params)
+            if (result === false) {
+                event.preventDefault()
+            }
+            return result
+        }
+    }
 }
 
 export function useHandler(handler) {

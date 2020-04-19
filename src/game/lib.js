@@ -23,7 +23,7 @@ export function rand(value = 1) {
 }
 
 export function randUniform(min, max) {
-    let item = Math.round(rand() * (max - min)) + min
+    return Math.round(rand() * (max - min)) + min
 }
 
 export function fromHSV(h, s, v) {
@@ -62,7 +62,7 @@ export function fromHSV(h, s, v) {
             g = p
             b = v
             break
-        case 5:
+        default:
             r = v
             g = p
             b = q

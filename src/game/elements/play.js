@@ -1,8 +1,8 @@
-import {element} from 'game/lib'
+import {particle} from 'game/lib'
 import {Surface} from '../cells/surface'
 import React, {useRef} from 'react'
 
-element(ParticleSurface)
+particle(ParticleSurface)
 
 function ParticleSurface() {
     const surface = useRef(new Surface(500, 500))
