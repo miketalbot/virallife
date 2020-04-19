@@ -4,3 +4,10 @@ export function setFromEvent(fn, after = null) {
         after && after(event)
     }
 }
+
+export function bind(target, field, refresh) {
+    return {
+        value: target[field],
+        onChange: refresh.planRefresh(setFromEvent((v) => (target[field] = v))),
+    }
+}

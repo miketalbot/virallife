@@ -3,6 +3,10 @@ import {handle} from 'common/events'
 import {Emitter as PixiEmitter} from 'pixi-particles'
 import * as PIXI from 'pixi.js'
 import {PixiComponent} from '@inlet/react-pixi'
+import React, {createContext, useContext, useEffect, useRef} from 'react'
+import useMeasure from 'use-measure'
+import Box from '@material-ui/core/Box'
+import {useRefresh} from 'common/useRefresh'
 
 export const Emitter = PixiComponent('Emitter', {
     create() {
@@ -37,6 +41,25 @@ export const Emitter = PixiComponent('Emitter', {
     },
 })
 
+export function prevent(fn) {
+    return function(event, ...params) {
+        event.preventDefault()
+        event.stopPropagation()
+        return fn(event, ...params)
+    }
+}
+
+export function Sized({ children, ...props }) {
+    const ref = useRef()
+    const measure = useMeasure(ref)
+
+    return (
+        <Box ref={ref} {...props}>
+            {!!measure && !!measure.width && children(measure)}
+        </Box>
+    )
+}
+
 Sugar.extend()
 export let game = {
     states: {},
@@ -52,6 +75,12 @@ export function particle(handler) {
     handle('particle-elements', function(elements) {
         elements.push(handler)
     })
+}
+
+const roundingFactor = 100
+
+export function uniform(n) {
+    return Math.round(n * roundingFactor) / roundingFactor
 }
 
 export function rand(value = 1) {
@@ -124,4 +153,37 @@ export function resizeArray(array, size, defaultValue) {
     }
 
     return array
+}
+
+export const StructureContext = createContext({ current: null })
+
+export function useStructure() {
+    return useContext(StructureContext)
+}
+
+export function useLocalRefresh() {
+    const { save } = useStructure()
+    return useRefresh(save)
+}
+
+export function useInterval(fn, interval) {
+    useEffect(() => {
+        let id = setInterval(fn, interval)
+        return () => {
+            clearInterval(id)
+        }
+    })
+}
+
+export function useTimeout(fn, timeout) {
+    useEffect(() => {
+        let id = setTimeout(fn, timeout)
+        return () => {
+            clearTimeout(id)
+        }
+    })
+}
+
+export function lerp(v0, v1, t) {
+    return v0 * (1 - t) + v1 * t
 }

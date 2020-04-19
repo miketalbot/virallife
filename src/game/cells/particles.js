@@ -1,7 +1,8 @@
 import {randGen, VELOCITY_MULT} from '../constants'
 import Prob from 'prob.js'
-import {typeIds} from './types'
+import {typeIds, types} from './types'
 import {Sprite} from 'pixi.js'
+import {textures} from './sprites'
 
 let id = 1
 
@@ -25,14 +26,19 @@ export class Particles {
     length = 0
 
     startParticles() {
+        let particles = this.particles
+        for (let i = 0, l = this.length; i < l; i++) {
+            particles[i].sprite.x = -10000
+            particles[i].sprite.alpha = 0
+        }
         this.length = 0
     }
     getParticle() {
-        let particle = this.particles[this.length]
-        if (!particle) {
-            particle = this.particles[this.length] = {
-                x: 0.0,
-                y: 0.0,
+        let p = this.particles[this.length]
+        if (!p) {
+            p = this.particles[this.length] = {
+                x: -10000.0,
+                y: -10000.0,
                 vx: 0.0,
                 vy: 0.0,
                 type: 0,
@@ -44,8 +50,19 @@ export class Particles {
                 sprite: new Sprite(),
             }
         }
+        p.x = -10000.0
+        p.y = -10000.0
+        p.vx = 0.0
+        p.vy = 0.0
+        p.speed = 0
+        p.sprite.scale.set(0.5)
+        p.sprite.anchor.set(0.5)
+        p.sprite.interactive = false
+        p.sprite.pointerdown = null
+        p.sprite.pointerup = null
+        p.sprite.pointermove = null
         this.length++
-        return particle
+        return p
     }
     randomParticles(number, width, height, random = randGen) {
         const randUni = Prob.uniform(0, 1)
@@ -60,6 +77,7 @@ export class Particles {
             p.vx = randNorm(random) * VELOCITY_MULT
             p.vy = randNorm(random) * VELOCITY_MULT
             p.speed = randUni(random)
+            p.sprite.texture = textures[types[p.type].sprite]
         }
     }
     get(index) {

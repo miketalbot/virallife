@@ -7,7 +7,11 @@ import {images} from './sprites'
 
 export const types = {
     nucleus: {
-        color: 0xffffff,
+        good: true,
+        name: 'Nucleus',
+        cost: 600,
+        description: 'The core of your structure',
+        color: 0xffd990,
         sprite: nucleus,
         attract: {
             nucleus: -4.5,
@@ -23,7 +27,11 @@ export const types = {
         },
     },
     defender: {
-        color: 0xffffff,
+        name: 'Shield',
+        good: true,
+        description: 'Shields a nucleus',
+        cost: 20,
+        color: 0xff0000,
         sprite: cell,
         attract: {
             nucleus: 1.72,
