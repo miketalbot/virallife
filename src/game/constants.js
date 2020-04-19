@@ -1,6 +1,6 @@
-import {Random} from 'random-js'
+import {MersenneTwister19937, Random} from 'random-js'
 
-export const RADIUS = 5.0
+export const RADIUS = 10
 export const DIAMETER = 2.0 * RADIUS
 export const presets = {
     Balanced: {
@@ -46,4 +46,5 @@ export const presets = {
 }
 export const CELL_SIZE = 80
 export const VELOCITY_MULT = 0.2
-export const randGen = new Random().next
+export const randGen = new Random(MersenneTwister19937.seed(Date.now())).next
+export const R_SMOOTH = 2.0

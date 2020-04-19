@@ -1,15 +1,66 @@
 import Prob from 'prob.js'
 import {fromHSV, resizeArray} from '../lib'
 import {DIAMETER, presets, randGen} from '../constants'
-import virus from './sprites/mainvirus_bad_small.png'
+import virus from './sprites/mainvirus_bad.2.png'
+import cell from './sprites/red_cell.png'
+import nucleus from './sprites/good_cell01.png'
 
+export const types = {
+    nucleus: {
+        color: 0xffffff,
+        sprite: nucleus,
+        attract: {
+            nucleus: -4.5,
+            defender: 0.4,
+        },
+        minR: {
+            nucleus: DIAMETER * 4,
+            defender: DIAMETER * 2,
+        },
+        maxR: {
+            nucleus: DIAMETER * 9,
+            defender: DIAMETER * 4,
+        },
+    },
+    defender: {
+        color: 0xffffff,
+        sprite: cell,
+        attract: {
+            nucleus: 1.72,
+            defender: -0.22,
+        },
+        minR: {
+            nucleus: DIAMETER * 1.2,
+            defender: DIAMETER,
+        },
+        maxR: {
+            nucleus: DIAMETER * 9,
+            defender: DIAMETER * 5,
+        },
+    },
+}
+export const typeIds = getTypeIds(types)
+
+function getTypeIds(types) {
+    const result = {}
+    let i = 0
+    for (let key of Object.keys(types)) {
+        result[key] = i++
+    }
+    return result
+}
+
+const images = [virus, cell, nucleus]
 export class ParticleTypes {
     constructor(size = 0) {
         this.colour = Array.from({ length: size }, () => ({ r: 0, g: 0, b: 0, a: 0 }))
-        this.sprite = Array.from({ length: size }, () => virus)
+        this.sprite = Array.from({ length: size }, (c, index) => images[index % images.length])
         this.attract = Array(size * size).fill(0)
         this.minR = Array(size * size).fill(0)
         this.maxR = Array(size * size).fill(0)
+        this.getMaxR = this.getMaxR.bind(this)
+        this.getMinR = this.getMinR.bind(this)
+        this.getAttract = this.getAttract.bind(this)
     }
 
     resize(size) {
@@ -62,7 +113,7 @@ export class ParticleTypes {
 
         for (let i = 0; i < this.size(); ++i) {
             this.setColor(i, fromHSV(i / this.size(), 1, (i % 2) * 0.5 + 0.5))
-
+            this.sprite[i] = images[i % images.length]
             for (let j = 0; j < this.size(); ++j) {
                 if (i === j) {
                     this.setAttract(i, j, -Math.abs(randAttr(random)))
@@ -79,6 +130,7 @@ export class ParticleTypes {
                 this.setMinR(j, i, this.getMinR(i, j))
             }
         }
+        console.log(this.sprite)
     }
 }
 

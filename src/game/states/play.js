@@ -2,7 +2,7 @@ import React from 'react'
 import {register} from 'game'
 import MUIContainer from '@material-ui/core/Container'
 import {Box} from '@material-ui/core'
-import {Container, ParticleContainer, Stage} from '@inlet/react-pixi'
+import {Container, Stage} from '@inlet/react-pixi'
 import {raise} from 'common/events'
 
 register('play', { Page })
@@ -30,11 +30,6 @@ function GameRender() {
                     <Item key={index} />
                 ))}
             </Container>
-            <ParticleContainer>
-                {particles.map((Item, index) => (
-                    <Item key={index} />
-                ))}
-            </ParticleContainer>
         </Stage>
     )
 }

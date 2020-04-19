@@ -1,5 +1,41 @@
 import Sugar from 'sugar'
 import {handle} from 'common/events'
+import {Emitter as PixiEmitter} from 'pixi-particles'
+import * as PIXI from 'pixi.js'
+import {PixiComponent} from '@inlet/react-pixi'
+
+export const Emitter = PixiComponent('Emitter', {
+    create() {
+        return new PIXI.Container()
+    },
+    applyProps(instance, oldProps, newProps) {
+        const { image, config } = newProps
+
+        if (!this._emitter) {
+            this._emitter = new PixiEmitter(instance, [PIXI.Texture.from(image)], config)
+
+            let elapsed = Date.now()
+
+            const t = () => {
+                this._emitter.raf = requestAnimationFrame(t)
+                const now = Date.now()
+
+                this._emitter.update((now - elapsed) * 0.001)
+
+                elapsed = now
+            }
+
+            this._emitter.emit = true
+            t()
+        }
+    },
+    willUnmount() {
+        if (this._emitter) {
+            this._emitter.emit = false
+            cancelAnimationFrame(this._emitter.raf)
+        }
+    },
+})
 
 Sugar.extend()
 export let game = {
