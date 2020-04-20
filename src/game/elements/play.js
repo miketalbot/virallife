@@ -13,10 +13,11 @@ element(ParticleSurface)
 function ParticleSurface({ structure }) {
     const surface = useRef(new Surface(GAME_WIDTH, GAME_HEIGHT))
     structure = structure || getStructures()[1]
+    const parts = structure.parts
     useEffect(() => {
         const particles = surface.current.particles
         particles.startParticles()
-        for (let part of structure.parts) {
+        for (let part of parts) {
             let p = particles.getParticle()
             p.x = part.x
             p.y = part.y
@@ -26,7 +27,7 @@ function ParticleSurface({ structure }) {
             updateSprite(p)
         }
         surface.current.refresh()
-    }, [])
+    }, [parts, structure.id])
     return (
         <Container x={GAME_WIDTH / 2} y={GAME_HEIGHT / 2}>
             <surface.current.Render />

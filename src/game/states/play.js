@@ -25,14 +25,6 @@ function Page() {
     )
 }
 
-function Player({ width, height, scale }) {
-    return (
-        <Box width={width} height={height}>
-            Hello
-        </Box>
-    )
-}
-
 function GameRender({ width, height, scale }) {
     const [ready, setReady] = useState(false)
     const stage = useRef()

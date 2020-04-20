@@ -1,5 +1,5 @@
 import Sugar from 'sugar'
-import {handle} from 'common/events'
+import {handle, raise} from 'common/events'
 import {Emitter as PixiEmitter} from 'pixi-particles'
 import * as PIXI from 'pixi.js'
 import {PixiComponent} from '@inlet/react-pixi'
@@ -8,12 +8,16 @@ import useMeasure from 'use-measure'
 import Box from '@material-ui/core/Box'
 import {useRefresh} from 'common/useRefresh'
 
+PIXI.Ticker.shared.add((delta) => {
+    raise('tick', delta)
+})
+
 export const Emitter = PixiComponent('Emitter', {
     create() {
         return new PIXI.Container()
     },
     applyProps(instance, oldProps, newProps) {
-        const { image, config } = newProps
+        const {image, config} = newProps
 
         if (!this._emitter) {
             this._emitter = new PixiEmitter(instance, [PIXI.Texture.from(image)], config)
