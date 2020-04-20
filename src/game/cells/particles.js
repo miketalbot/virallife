@@ -57,6 +57,8 @@ export class Particles {
         p.y = -10000.0
         p.vx = 0.0
         p.vy = 0.0
+        delete p.beams
+        delete p.beat
         p.other = Math.random() * 300
         p.speed = Math.random() * .9 + .1
         p.speed2 = Math.random() * .9 + .1

@@ -50,6 +50,7 @@ export const tcell = {
         },
     },
     after(surface, tcell) {
+        if (!tcell.beams) return
         tcell.beat = tcell.beat + 1
 
         for (let beam of tcell.beams) {

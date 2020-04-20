@@ -18,15 +18,15 @@ import {useLocalEvent} from 'common/use-event'
 export function Preview({ current }) {
     const localRefresh = useLocalRefresh()
     return (
-        <Box height={1} display={'flex'} flexDirection={'column'} clone>
+        <Box height={1} display={'flex'} key={current && current.id} flexDirection={'column'} clone>
             <Card>
-                <CardHeader title={'Preview'} />
+                <CardHeader title={'Preview'}/>
                 {current && (
                     <Box flexGrow={1} display={'flex'} flexDirection={'column'} minHeight={280} clone>
                         <CardContent>
                             <Sized w={1} flexGrow={1}>
                                 {(size) => {
-                                    return <Previewer structure={current} size={size} height={size.height} />
+                                    return <Previewer structure={current} size={size} height={size.height}/>
                                 }}
                             </Sized>
                         </CardContent>
@@ -97,7 +97,7 @@ function Previewer({ size, height = 300, structure, outerScale = 1 }) {
                     p.x = part.x
                     p.y = part.y
                     p.type = part.type
-                    p.sprite.texture = textures[types[p.type].sprite]
+                    p.sprite.texture = textures[types[part.type].sprite]
                     p.sprite.alpha = 1
                     updateSprite(p)
                 }
