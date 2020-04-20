@@ -1,16 +1,21 @@
 import {Surface} from '../cells/surface'
 import React, {useEffect, useRef} from 'react'
-import {element} from '../lib'
+import {element, SurfaceContext} from '../lib'
 import {GAME_HEIGHT, GAME_WIDTH} from '../constants'
 import {Container} from '@inlet/react-pixi'
 import {textures} from '../cells/sprites'
 import {types} from '../cells/types'
 import {updateSprite} from '../cells/process'
 import {getStructures} from '../data'
+import {Launcher} from '../cells/launcher'
+import {raise} from 'common/events'
 
 element(ParticleSurface)
 
-function ParticleSurface({ structure }) {
+const BASE_X = -GAME_WIDTH / 2
+const BASE_Y = -GAME_HEIGHT / 2
+
+function ParticleSurface({structure}) {
     const surface = useRef(new Surface(GAME_WIDTH, GAME_HEIGHT))
     structure = structure || getStructures()[1]
     const parts = structure.parts
@@ -26,11 +31,21 @@ function ParticleSurface({ structure }) {
             p.sprite.alpha = 1
             updateSprite(p)
         }
+        raise('additional-particles', particles, surface)
         surface.current.refresh()
     }, [parts, structure.id])
+
     return (
-        <Container x={GAME_WIDTH / 2} y={GAME_HEIGHT / 2}>
-            <surface.current.Render />
-        </Container>
+        <SurfaceContext.Provider value={surface.current}>
+            <Container x={GAME_WIDTH / 2} y={GAME_HEIGHT / 2}>
+                <surface.current.Render/>
+                <Launcher x={BASE_X + (GAME_WIDTH * 1) / 14} y={BASE_Y + (GAME_HEIGHT * 2) / 12}/>
+                <Launcher x={BASE_X + (GAME_WIDTH * 1) / 14} y={BASE_Y + (GAME_HEIGHT * 6) / 12}/>
+                <Launcher x={BASE_X + (GAME_WIDTH * 1) / 14} y={BASE_Y + (GAME_HEIGHT * 10) / 12}/>
+                <Launcher x={BASE_X + (GAME_WIDTH * 13) / 14} y={BASE_Y + (GAME_HEIGHT * 2) / 12}/>
+                <Launcher x={BASE_X + (GAME_WIDTH * 13) / 14} y={BASE_Y + (GAME_HEIGHT * 6) / 12}/>
+                <Launcher x={BASE_X + (GAME_WIDTH * 13) / 14} y={BASE_Y + (GAME_HEIGHT * 10) / 12}/>
+            </Container>
+        </SurfaceContext.Provider>
     )
 }

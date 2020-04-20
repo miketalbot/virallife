@@ -3,7 +3,7 @@ import {fromHSV, resizeArray} from '../lib'
 import {DIAMETER, presets, randGen} from '../constants'
 import cell from './sprites/red_cell.png'
 import nucleus from './sprites/good_cell01.png'
-import {images} from './sprites'
+import {bad1, images, virus} from './sprites'
 
 export const types = {
     nucleus: {
@@ -16,14 +16,23 @@ export const types = {
         attract: {
             nucleus: -4.5,
             defender: 0.4,
+            repel: -5,
+            virus: -0.1,
+            phage: -.25
         },
         minR: {
             nucleus: DIAMETER * 4,
             defender: DIAMETER * 2,
+            repel: DIAMETER * 6,
+            virus: DIAMETER,
+            phage: DIAMETER
         },
         maxR: {
             nucleus: DIAMETER * 9,
             defender: DIAMETER * 4,
+            repel: DIAMETER * 8,
+            virus: DIAMETER * 2,
+            phage: DIAMETER * 4
         },
     },
     defender: {
@@ -36,16 +45,86 @@ export const types = {
         attract: {
             nucleus: 1.72,
             defender: -0.22,
+            repel: -0.32,
+            virus: 2.5,
+            phage: -1
         },
         minR: {
             nucleus: DIAMETER * 1.2,
             defender: DIAMETER,
+            repel: DIAMETER * 6,
+            virus: DIAMETER,
+            phage: DIAMETER
         },
         maxR: {
             nucleus: DIAMETER * 9,
             defender: DIAMETER * 5,
+            repel: DIAMETER * 8,
+            virus: DIAMETER * 3,
+            phage: DIAMETER * 4
         },
     },
+    repel: {
+        sprite: 'none',
+    },
+    virus: {
+        name: 'Virus',
+        description: 'Tries to infect a nucleus',
+        cost: 400,
+        life: 60 * 10,
+        color: 0x544622,
+        sprite: virus,
+        attract: {
+            nucleus: 2.72,
+            defender: -0.42,
+            repel: -0.32,
+            virus: -2,
+            phage: .23
+        },
+        minR: {
+            nucleus: DIAMETER * 1.2,
+            defender: DIAMETER,
+            repel: DIAMETER * 6,
+            virus: DIAMETER,
+            phage: DIAMETER
+        },
+        maxR: {
+            nucleus: DIAMETER * 9,
+            defender: DIAMETER * 5,
+            repel: DIAMETER * 6,
+            virus: DIAMETER * 2,
+            phage: DIAMETER * 4
+        }
+    },
+    phage: {
+        name: 'Phage',
+        description: 'Tries to kill shields',
+        cost: 100,
+        life: 60 * 10,
+        color: 0xF200FF,
+        sprite: bad1,
+        attract: {
+            nucleus: .3,
+            defender: 1.2,
+            repel: -0.32,
+            virus: -.5,
+            phage: -.9
+        },
+        minR: {
+            nucleus: DIAMETER * 1.2,
+            defender: DIAMETER,
+            repel: DIAMETER * 6,
+            virus: DIAMETER,
+            phage: DIAMETER
+        },
+        maxR: {
+            nucleus: DIAMETER * 9,
+            defender: DIAMETER * 5,
+            repel: DIAMETER * 6,
+            virus: DIAMETER * 2,
+            phage: DIAMETER * 6
+        }
+    }
 }
 export const typeIds = getTypeIds(types)
 

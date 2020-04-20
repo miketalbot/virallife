@@ -4,7 +4,7 @@ import MUIContainer from '@material-ui/core/Container'
 import {Box} from '@material-ui/core'
 import {Container, Stage} from '@inlet/react-pixi'
 import {raise} from 'common/events'
-import {Sized} from '../lib'
+import {ScaleContext, Sized} from '../lib'
 import {GAME_HEIGHT, GAME_WIDTH} from '../constants'
 
 register('play', { Page })
@@ -44,9 +44,11 @@ function Parts({ scale }) {
     const items = raise('game-elements', [])
     return (
         <Container scale={scale}>
-            {items.map((Item, index) => (
-                <Item key={index} />
-            ))}
+            <ScaleContext.Provider value={scale}>
+                {items.map((Item, index) => (
+                    <Item key={index}/>
+                ))}
+            </ScaleContext.Provider>
         </Container>
     )
 }

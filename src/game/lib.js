@@ -8,6 +8,17 @@ import useMeasure from 'use-measure'
 import Box from '@material-ui/core/Box'
 import {useRefresh} from 'common/useRefresh'
 
+export const ScaleContext = React.createContext(1)
+export const SurfaceContext = React.createContext(null)
+
+export function useScale() {
+    return useContext(ScaleContext)
+}
+
+export function useSurface() {
+    return useContext(SurfaceContext)
+}
+
 PIXI.Ticker.shared.add((delta) => {
     raise('tick', delta)
 })

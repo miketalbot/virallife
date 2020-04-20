@@ -4,10 +4,15 @@ import {types} from './types'
 export const particleFunctions = {
     move,
     collide,
+    write
 }
 
 function toRad(deg) {
     return deg / 180 * Math.PI
+}
+
+function write(delta, p) {
+    this.collision.write(p.x, p.y, p)
 }
 
 function move(delta, p) {
@@ -41,6 +46,7 @@ function collide(p, q) {
     let type = types[p.type]
     const minR = type.minR[q.type] || DIAMETER
     const maxR = type.maxR[q.type] || DIAMETER
+
 
     if (r2 > maxR * maxR || r2 < 0.01) {
         return

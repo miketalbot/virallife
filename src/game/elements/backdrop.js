@@ -3,7 +3,7 @@ import {ParticleContainer, Sprite, TilingSprite} from '@inlet/react-pixi'
 import backdrop from 'game/images/background_life.jpg'
 import {element} from 'game/lib'
 import {GAME_HEIGHT, GAME_WIDTH} from '../constants'
-import {cell1, cell2, cell3} from '../cells/sprites/index.js'
+import {bg_cell1, bg_cell2, bg_cell3} from '../cells/sprites/index.js'
 import {useLocalEvent} from 'common/use-event'
 
 element(Backdrop)
@@ -35,7 +35,7 @@ function Backdrop() {
 }
 
 let next = 0
-const images = [cell1, cell2, cell3]
+const images = [bg_cell1, bg_cell2, bg_cell3]
 
 function Cell() {
     const ref = useRef()
