@@ -22,7 +22,7 @@ export function Trail({ api, speed = 2.5 / 60, size = 2000 }) {
                 particle.t = 0
             }
             particle.alpha *= 0.95
-            particle.scale.set(particle.t * 0.85)
+            particle.scale.set(particle.t * 1.04)
         }
     })
     api.current = emit
@@ -58,6 +58,7 @@ export function Trail({ api, speed = 2.5 / 60, size = 2000 }) {
 
     function add() {
         return function(container) {
+            if (!container) return
             particles.forEach((p) => container.addChild(p))
         }
     }

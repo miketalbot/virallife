@@ -18,7 +18,7 @@ export class Surface {
         this.trail = trail
         this.height = height | 0
         this.particles = new Particles()
-        this.collision = new Collision(100)
+        this.collision = new Collision(140)
         this.friction = 0.07
         this.particles.startParticles()
         count && this.particles.randomParticles(count, width, height)
@@ -49,14 +49,14 @@ export class Surface {
         this.refresh = useRefresh()
         const trail = useRef()
         const [containers] = useState([])
-        useTick((delta) => {
+        useTick(() => {
             this.emit = trail.current || noop
-            delta = 1
             const list = this.particles.getParticles(this.list)
             this.collision.startCollision()
+
             for (let p of list) {
                 let tick = particleFunctions[p.tick]
-                tick && tick.call(this, delta, p)
+                tick && tick.call(this, this.rate, p)
             }
             this.collision.collisions((p, q) => {
                 let collision = particleFunctions[p.collide]
@@ -79,8 +79,6 @@ export class Surface {
             return function(container) {
                 if (!container) return
                 containers.push(container)
-                container.x = self.width / 2
-                container.y = self.height / 2
                 group.forEach((item) => container.addChild(item.sprite))
             }
         }

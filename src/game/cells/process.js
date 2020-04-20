@@ -18,7 +18,7 @@ function move(delta, p) {
     this.collision.write(p.x, p.y, p)
     if (this.trail) {
         const f = Math.sqrt(p.vx * p.vx + p.vy * p.vy)
-        if (f > 3) this.emit(p.x, p.y, lx, ly, f / 3, types[p.type].color, f * 0.85)
+        if (f > 2) this.emit(p.x, p.y, lx, ly, f / 3, types[p.type].color, f * 0.85)
     }
     updateSprite(p)
 }
@@ -58,5 +58,6 @@ function collide(p, q) {
 export function updateSprite(p) {
     p.sprite.x = p.x
     p.sprite.y = p.y
+    p.sprite.scale.set(0.7)
     p.sprite.angle = p.rotation
 }

@@ -35,7 +35,7 @@ export class Particles {
     }
     getParticle() {
         let p = this.particles[this.length]
-        if (!p) {
+        if (true) {
             p = this.particles[this.length] = {
                 x: -10000.0,
                 y: -10000.0,
