@@ -34,7 +34,6 @@ export class Particles {
         this.length = 0
     }
     getParticle() {
-        console.log('gp')
         let p = this.particles[this.length]
         if (!p) {
             p = this.particles[this.length] = {
