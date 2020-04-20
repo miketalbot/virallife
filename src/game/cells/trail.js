@@ -15,7 +15,6 @@ export function Trail({ api, speed = 2.5 / 60, size = 2000 }) {
         })
     )
     useTick((delta) => {
-        let i = 0
         for (let particle of particles) {
             if (particle.t > 0.04) {
                 particle.t -= speed * delta

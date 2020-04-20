@@ -1,4 +1,4 @@
-import {adjectives, animals, names, uniqueNamesGenerator} from 'unique-names-generator'
+import {adjectives, animals, uniqueNamesGenerator} from 'unique-names-generator'
 
 const types = [
     'An investigation into the',
@@ -27,10 +27,6 @@ const config = {
     dictionaries: [types, adjectives, animals, virals],
     separator: ' ',
     length: 4,
-}
-const nameConfig = {
-    dictionaries: [names],
-    length: 1,
 }
 
 export function createName() {

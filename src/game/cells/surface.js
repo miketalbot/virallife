@@ -7,7 +7,6 @@ import {noop} from 'common/noop'
 import {Trail} from './trail'
 import {useRefresh} from 'common/useRefresh'
 import {DIAMETER} from '../constants'
-import {lerp} from '../lib'
 
 export class Surface {
     list = []
@@ -46,37 +45,15 @@ export class Surface {
     }
 
     Render() {
-        const track = this.track
         const self = this
         this.refresh = useRefresh()
         const trail = useRef()
         const [containers] = useState([])
-        let tx = 0,
-            ty = 0
-        let firstGo = true
         useTick((delta) => {
             this.emit = trail.current || noop
             delta = 1
             const list = this.particles.getParticles(this.list)
             this.collision.startCollision()
-            if (list.length && this.track) {
-                const first = list[0]
-                tx = lerp(tx, first.x, firstGo ? 1 : 0.03)
-                ty = lerp(ty, first.y, firstGo ? 1 : 0.03)
-                firstGo = false
-            }
-            for (let container of containers) {
-                if (container) {
-                    try {
-                        container.x = -(tx - self.width / 2)
-                        container.y = -(ty - self.height / 2)
-                    } catch (e) {}
-                }
-            }
-            if (this.background && track) {
-                this.background.x = -tx % this.background.texture.width
-                this.background.y = -ty % this.background.texture.height
-            }
             for (let p of list) {
                 let tick = particleFunctions[p.tick]
                 tick && tick.call(this, delta, p)
@@ -90,7 +67,7 @@ export class Surface {
         const groups = this.particles.getGroups()
         return (
             <>
-                <Graphics preventRedraw={false} draw={drawOuter} />
+                {!this.trail && <Graphics preventRedraw={false} draw={drawOuter} />}
                 {this.trail && <Trail api={trail} />}
                 {groups.map((group, type) => {
                     return <this.Container ref={attachSprites(group)} key={type} />
