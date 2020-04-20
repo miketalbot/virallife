@@ -211,9 +211,9 @@ function Editor({ size, height = 300, structure, outerScale = 1 }) {
 
     function clickCell(part, p) {
         return function(event) {
-            if (part.fixed) return
             p.startPt = { ...event.data.global }
             if (Date.now() - p.lastClick < 400) {
+                if (part.fixed) return
                 structure.parts.splice(structure.parts.indexOf(part), 1)
                 refresh()
             } else {

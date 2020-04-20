@@ -102,7 +102,7 @@ function Previewer({ size, height = 300, structure, outerScale = 1 }) {
                     updateSprite(p)
                 }
                 cache = key
-                surface.refresh()
+                surface.reactRefresh()
             }
             let x = 0
             let y = 0

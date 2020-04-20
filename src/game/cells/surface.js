@@ -9,6 +9,7 @@ import {DIAMETER} from '../constants'
 import {useLocalEvent} from 'common/use-event'
 import {Explosions} from './explosions'
 import {callFunction} from './types'
+import {useRefresh} from 'common/useRefresh'
 
 export class Surface {
     list = []
@@ -51,6 +52,7 @@ export class Surface {
     Render() {
         const self = this
         this.refresh = refresh
+        this.reactRefresh = useRefresh()
         const trail = useRef()
         const explode = useRef()
         const cache = {}
