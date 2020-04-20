@@ -1,7 +1,7 @@
 import {noop} from 'common/noop'
 import {repel} from './types/repel'
 import {virus} from './types/virus'
-import {tcell} from './types/tcell'
+import {tcell, white} from './types/tcell'
 import {nucleus} from './types/nucleus'
 import {defender} from './types/defender'
 import {phage} from './types/phage'
@@ -15,6 +15,7 @@ export const types = {
     virus,
     phage,
     toxin,
+    white
 
 }
 export const typeIds = getTypeIds(types)

@@ -39,11 +39,8 @@ export const toxin = {
         }
     },
     collide: {
-        defender({source, target, r, dx, dy, surface}) {
-            if (r < DIAMETER * 3) {
-                source.proximal.push(target)
-            }
-        },
+        defender: hit,
+        tcell: hit
     },
     attract: {
         nucleus: 0.15,
@@ -61,7 +58,7 @@ export const toxin = {
         virus: DIAMETER,
         phage: DIAMETER,
         toxin: DIAMETER * 1.6,
-        tcell: DIAMETER * 2
+        tcell: DIAMETER * 1.7
     },
     maxR: {
         nucleus: DIAMETER * 7,
@@ -75,4 +72,10 @@ export const toxin = {
     init(phage) {
         phage.ticks = 500
     },
+}
+
+function hit({source, target, r, dx, dy, surface}) {
+    if (r < DIAMETER * 4) {
+        source.proximal.push(target)
+    }
 }

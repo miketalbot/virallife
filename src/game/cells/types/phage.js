@@ -31,32 +31,17 @@ export const phage = {
         }
     },
     collide: {
-        defender({source, target, r, dx, dy, surface}) {
-            if (r < DIAMETER * 1.7) {
-                source.proximal++
-            }
-            if (r < DIAMETER * 1.2) {
-                callFunction(target.type, 'hit', surface, target, 1)
-                sparks(
-                    surface.spawn,
-                    source.x + (dx * r) / 2,
-                    source.y + (dy * r) / 2,
-                    types[target.type].color,
-                    8,
-                    0.3,
-                    5
-                )
-            }
-        },
+        defender: hit,
+        tcell: hit,
     },
     attract: {
-        nucleus: 0.3,
+        nucleus: 0.01,
         defender: 1.2,
         repel: -0.32,
         virus: -0.35,
         phage: -0.9,
         toxin: -1.3,
-        tcell: -0.05
+        tcell: 0.5,
     },
     minR: {
         nucleus: DIAMETER * 1.2,
@@ -65,7 +50,7 @@ export const phage = {
         virus: DIAMETER,
         phage: DIAMETER,
         toxin: DIAMETER,
-        tcell: DIAMETER * 2
+        tcell: DIAMETER,
     },
     maxR: {
         nucleus: DIAMETER * 9,
@@ -74,9 +59,19 @@ export const phage = {
         virus: DIAMETER * 2,
         phage: DIAMETER * 6,
         toxin: DIAMETER * 7,
-        tcell: DIAMETER * 8
+        tcell: DIAMETER * 8,
     },
     init(phage) {
         phage.ticks = 500
     },
+}
+
+function hit({source, target, r, dx, dy, surface}) {
+    if (r < DIAMETER * 1.7 && target.type === 'defender') {
+        source.proximal++
+    }
+    if (r < DIAMETER * 1.3) {
+        callFunction(target.type, 'hit', surface, target, 1)
+        sparks(surface.spawn, source.x + (dx * r) / 2, source.y + (dy * r) / 2, types[target.type].color, 8, 0.3, 5)
+    }
 }
