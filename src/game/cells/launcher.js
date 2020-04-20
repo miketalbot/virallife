@@ -12,9 +12,10 @@ import {textures} from './sprites'
 
 const launcherArea = new PIXI.Circle(0, 0, DIAMETER * 5)
 const typeList = ['phage', 'toxin', 'virus']
+let baseType = 0
 
 export function Launcher({x, y}) {
-    const [type, setType] = useState(0)
+    const [type, setType] = useState(baseType++ % 3)
     const [mode, setMode] = useState('off')
     const scale = useScale()
     const surface = useSurface()

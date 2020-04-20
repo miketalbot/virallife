@@ -3,7 +3,7 @@ import {fromHSV, mapToRgb, resizeArray} from '../lib'
 import {DIAMETER, presets, randGen} from '../constants'
 import cell from './sprites/red_cell.png'
 import nucleus from './sprites/good_cell01.png'
-import {bad1, bad3, images, virus} from './sprites'
+import {bad1, bad3, cell3, images, virus} from './sprites'
 import {noop} from 'common/noop'
 import {darkSparks, explode, smoke, sparks} from './explode'
 import chroma from 'chroma-js'
@@ -22,11 +22,12 @@ export const types = {
         sprite: nucleus,
         attract: {
             nucleus: -4.5,
-            defender: 0.03,
+            defender: 0.01,
             repel: -5,
-            virus: -0.4,
+            virus: -2.84,
             phage: -0.25,
-            toxin: -1
+            toxin: -1,
+            tcell: 0
         },
         minR: {
             nucleus: DIAMETER * 4,
@@ -34,7 +35,8 @@ export const types = {
             repel: DIAMETER * 6,
             virus: DIAMETER * 0.9,
             phage: DIAMETER,
-            toxin: DIAMETER
+            toxin: DIAMETER,
+            tcell: DIAMETER
         },
         maxR: {
             nucleus: DIAMETER * 9,
@@ -42,7 +44,8 @@ export const types = {
             repel: DIAMETER * 8,
             virus: DIAMETER * 2,
             phage: DIAMETER * 4,
-            toxin: DIAMETER * 8
+            toxin: DIAMETER * 8,
+            tcell: DIAMETER * 7
         },
         hit(surface, nucleus, points, source) {
             if (source.type !== 'virus') return
@@ -55,6 +58,7 @@ export const types = {
             }
         },
         after(surface, nucleus) {
+            nucleus.life += .02
             nucleus.sprite.tint = mapToRgb(scale(0.7 - nucleus.life / types.nucleus.life))
         },
     },
@@ -80,7 +84,8 @@ export const types = {
             repel: -0.32,
             virus: 2.85,
             phage: -1,
-            toxin: -.5
+            toxin: .25,
+            tcell: .1
         },
         minR: {
             nucleus: DIAMETER * 1.2,
@@ -88,7 +93,8 @@ export const types = {
             repel: DIAMETER * 6,
             virus: DIAMETER,
             phage: DIAMETER,
-            toxin: DIAMETER
+            toxin: DIAMETER,
+            tcell: DIAMETER
         },
         maxR: {
             nucleus: DIAMETER * 9,
@@ -96,7 +102,52 @@ export const types = {
             repel: DIAMETER * 8,
             virus: DIAMETER * 6,
             phage: DIAMETER * 4,
-            toxin: DIAMETER * 3
+            toxin: DIAMETER * 9,
+            tcell: DIAMETER * 5
+        },
+    },
+    tcell: {
+        name: 'T Cell',
+        good: true,
+        description: 'Fights off infection',
+        cost: 400,
+        life: 100,
+        color: 0x39B0E9,
+        sprite: cell3,
+        hit(surface, tcell, points) {
+            tcell.life -= points
+            if (tcell.life <= 0) {
+                explode(surface.spawn, tcell.x, tcell.y, types.tcell.color)
+                tcell.alive = false
+                raise('particle-destroyed', tcell)
+            }
+        },
+        attract: {
+            nucleus: .45,
+            defender: -0.01,
+            repel: -0.32,
+            virus: .6,
+            phage: .6,
+            toxin: .6,
+            tcell: -5
+        },
+        minR: {
+            nucleus: DIAMETER * 3.2,
+            defender: DIAMETER,
+            repel: DIAMETER * 6,
+            virus: DIAMETER * 3,
+            phage: DIAMETER * 3,
+            toxin: DIAMETER * 3,
+            tcell: DIAMETER * 5
+        },
+        maxR: {
+            nucleus: DIAMETER * 12,
+            defender: DIAMETER * 12,
+            repel: DIAMETER * 8,
+            virus: DIAMETER * 12,
+            phage: DIAMETER * 12,
+            toxin: DIAMETER * 12,
+            tcell: DIAMETER * 9,
         },
     },
     repel: {
@@ -110,20 +161,22 @@ export const types = {
         color: 0x544622,
         sprite: virus,
         attract: {
-            nucleus: 3.4,
+            nucleus: 5.4,
             defender: 0.225,
             repel: -0.32,
             virus: -2,
             phage: 0.03,
-            toxin: 0.05
+            toxin: 0.25,
+            tcell: -0.05
         },
         minR: {
-            nucleus: DIAMETER * 0.9,
+            nucleus: DIAMETER * 0.2,
             defender: DIAMETER,
             repel: DIAMETER * 6,
             virus: DIAMETER,
             phage: DIAMETER,
-            toxin: DIAMETER
+            toxin: DIAMETER,
+            tcell: DIAMETER * 2
         },
         maxR: {
             nucleus: DIAMETER * 14,
@@ -131,7 +184,8 @@ export const types = {
             repel: DIAMETER * 6,
             virus: DIAMETER * 2,
             phage: DIAMETER * 4,
-            toxin: DIAMETER * 4
+            toxin: DIAMETER * 4,
+            tcell: DIAMETER * 8
         },
         collide: {
             nucleus({source, target, r, dx, dy, surface}) {
@@ -204,7 +258,8 @@ export const types = {
             repel: -0.32,
             virus: -0.35,
             phage: -0.9,
-            toxin: -1.3
+            toxin: -1.3,
+            tcell: -0.05
         },
         minR: {
             nucleus: DIAMETER * 1.2,
@@ -212,7 +267,8 @@ export const types = {
             repel: DIAMETER * 6,
             virus: DIAMETER,
             phage: DIAMETER,
-            toxin: DIAMETER
+            toxin: DIAMETER,
+            tcell: DIAMETER * 2
         },
         maxR: {
             nucleus: DIAMETER * 9,
@@ -220,7 +276,8 @@ export const types = {
             repel: DIAMETER * 6,
             virus: DIAMETER * 2,
             phage: DIAMETER * 6,
-            toxin: DIAMETER * 7
+            toxin: DIAMETER * 7,
+            tcell: DIAMETER * 8
         },
         init(phage) {
             phage.ticks = 500
@@ -269,12 +326,13 @@ export const types = {
             },
         },
         attract: {
-            nucleus: 0.3,
-            defender: 0.32,
+            nucleus: 0.15,
+            defender: 0.27,
             repel: -0.32,
-            virus: -2.35,
-            toxin: -3.9,
-            phage: -4
+            virus: -3.35,
+            toxin: -6.9,
+            phage: -4,
+            tcell: -0.05
         },
         minR: {
             nucleus: DIAMETER * 1.2,
@@ -282,7 +340,8 @@ export const types = {
             repel: DIAMETER * 6,
             virus: DIAMETER,
             phage: DIAMETER,
-            toxin: DIAMETER
+            toxin: DIAMETER * 1.6,
+            tcell: DIAMETER * 2
         },
         maxR: {
             nucleus: DIAMETER * 7,
@@ -290,12 +349,14 @@ export const types = {
             repel: DIAMETER * 6,
             virus: DIAMETER * 2,
             phage: DIAMETER * 6,
-            toxin: DIAMETER * 10
+            toxin: DIAMETER * 10,
+            tcell: DIAMETER * 7
         },
         init(phage) {
             phage.ticks = 500
         },
     },
+
 }
 export const typeIds = getTypeIds(types)
 export const allTypes = Object.entries(types).map(([key, v]) => ({...v, key}))
