@@ -5,14 +5,16 @@ import {Graphics, ParticleContainer} from '@inlet/react-pixi'
 import {particleFunctions} from './process'
 import {noop} from 'common/noop'
 import {Trail} from './trail'
-import {useRefresh} from 'common/useRefresh'
 import {DIAMETER} from '../constants'
 import {useLocalEvent} from 'common/use-event'
+import {Explosions} from './explosions'
 
 export class Surface {
     list = []
 
     constructor(width, height, count, trail = true, Container = ParticleContainer) {
+        this.emit = noop
+        this.spawn = noop
         this.rate = 1
         this.Container = Container
         this.width = width | 0
@@ -47,11 +49,14 @@ export class Surface {
 
     Render() {
         const self = this
-        this.refresh = useRefresh()
+        this.refresh = refresh
         const trail = useRef()
+        const explode = useRef()
+        const cache = {}
         const [containers] = useState([])
         useLocalEvent('tick', () => {
             this.emit = trail.current || noop
+            this.spawn = explode.current || noop
             const list = this.particles.getParticles(this.list)
             this.collision.startCollision()
 
@@ -68,17 +73,32 @@ export class Surface {
         const groups = this.particles.getGroups()
         return (
             <>
-                {!this.trail && <Graphics preventRedraw={false} draw={drawOuter} />}
-                {this.trail && <Trail api={trail} />}
+                {!this.trail && <Graphics preventRedraw={false} draw={drawOuter}/>}
+                {this.trail && <Trail api={trail}/>}
                 {groups.map((group, type) => {
-                    return <this.Container ref={attachSprites(group)} key={type} />
+                    return <this.Container ref={attachSprites(group, type)} key={type}/>
                 })}
+                {this.trail && <Explosions api={explode}/>}
             </>
         )
 
-        function attachSprites(group) {
-            return function(container) {
+        function refresh() {
+            const groups = self.particles.getGroups()
+            groups.forEach((group, type) => {
+                console.log(cache)
+                const container = cache[type]
+                if (container) {
+                    group.forEach(item => {
+                        container.addChild(item.sprite)
+                    })
+                }
+            })
+        }
+
+        function attachSprites(group, type) {
+            return function (container) {
                 if (!container) return
+                cache[type] = container
                 containers.push(container)
                 group.forEach((item) => container.addChild(item.sprite))
             }

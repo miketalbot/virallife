@@ -18,21 +18,21 @@ export const types = {
             defender: 0.4,
             repel: -5,
             virus: -0.1,
-            phage: -.25
+            phage: -0.25,
         },
         minR: {
             nucleus: DIAMETER * 4,
             defender: DIAMETER * 2,
             repel: DIAMETER * 6,
             virus: DIAMETER,
-            phage: DIAMETER
+            phage: DIAMETER,
         },
         maxR: {
             nucleus: DIAMETER * 9,
             defender: DIAMETER * 4,
             repel: DIAMETER * 8,
             virus: DIAMETER * 2,
-            phage: DIAMETER * 4
+            phage: DIAMETER * 4,
         },
     },
     defender: {
@@ -47,21 +47,21 @@ export const types = {
             defender: -0.22,
             repel: -0.32,
             virus: 2.5,
-            phage: -1
+            phage: -1,
         },
         minR: {
             nucleus: DIAMETER * 1.2,
             defender: DIAMETER,
             repel: DIAMETER * 6,
             virus: DIAMETER,
-            phage: DIAMETER
+            phage: DIAMETER,
         },
         maxR: {
             nucleus: DIAMETER * 9,
             defender: DIAMETER * 5,
             repel: DIAMETER * 8,
             virus: DIAMETER * 3,
-            phage: DIAMETER * 4
+            phage: DIAMETER * 4,
         },
     },
     repel: {
@@ -79,54 +79,55 @@ export const types = {
             defender: -0.42,
             repel: -0.32,
             virus: -2,
-            phage: .23
+            phage: 0.23,
         },
         minR: {
             nucleus: DIAMETER * 1.2,
             defender: DIAMETER,
             repel: DIAMETER * 6,
             virus: DIAMETER,
-            phage: DIAMETER
+            phage: DIAMETER,
         },
         maxR: {
             nucleus: DIAMETER * 9,
             defender: DIAMETER * 5,
             repel: DIAMETER * 6,
             virus: DIAMETER * 2,
-            phage: DIAMETER * 4
-        }
+            phage: DIAMETER * 4,
+        },
     },
     phage: {
         name: 'Phage',
         description: 'Tries to kill shields',
         cost: 100,
         life: 60 * 10,
-        color: 0xF200FF,
+        color: 0xf200ff,
         sprite: bad1,
         attract: {
-            nucleus: .3,
+            nucleus: 0.3,
             defender: 1.2,
             repel: -0.32,
-            virus: -.5,
-            phage: -.9
+            virus: -0.5,
+            phage: -0.9,
         },
         minR: {
             nucleus: DIAMETER * 1.2,
             defender: DIAMETER,
             repel: DIAMETER * 6,
             virus: DIAMETER,
-            phage: DIAMETER
+            phage: DIAMETER,
         },
         maxR: {
             nucleus: DIAMETER * 9,
             defender: DIAMETER * 5,
             repel: DIAMETER * 6,
             virus: DIAMETER * 2,
-            phage: DIAMETER * 6
-        }
-    }
+            phage: DIAMETER * 6,
+        },
+    },
 }
 export const typeIds = getTypeIds(types)
+export const allTypes = Object.entries(types).map(([key, v]) => ({...v, key}))
 
 function getTypeIds(types) {
     const result = {}

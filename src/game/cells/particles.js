@@ -1,6 +1,6 @@
 import {randGen, VELOCITY_MULT} from '../constants'
 import Prob from 'prob.js'
-import {typeIds, types} from './types'
+import {allTypes, typeIds, types} from './types'
 import {Sprite} from 'pixi.js'
 import {textures} from './sprites'
 
@@ -99,16 +99,14 @@ export class Particles {
     }
     getGroups() {
         let max = -1
-        let into = []
+        let into = this.groups = this.groups || Array.from({length: allTypes.length}, () => [])
         const particles = this.particles
         for (let i = 0, l = this.length; i < l; i++) {
             const p = particles[i]
             let id = typeIds[p.type]
-            max = Math.max(id, max)
-            const list = (into[id] = into[id] || [])
-            list.push(particles[i])
+            into[id].push(particles[i])
         }
-        into.length = max + 1
+
         return into
     }
 }
