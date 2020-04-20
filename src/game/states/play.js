@@ -111,6 +111,7 @@ function GameRender({width, height, scale}) {
             setCount(1)
             await delay(500)
             setMode('play')
+
         }
     }
 

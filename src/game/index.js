@@ -2,6 +2,8 @@ import React from 'react'
 import {game, RouteContext} from 'game/lib'
 import {useParams} from 'react-router-dom'
 import useAsync from 'common/use-async'
+import CircularProgress from '@material-ui/core/CircularProgress'
+import Box from '@material-ui/core/Box'
 
 export function register(stateName, handler, opts) {
     const state = (game.states[stateName] = game.states[stateName] || {})
@@ -9,7 +11,12 @@ export function register(stateName, handler, opts) {
 }
 
 function Empty({stateName}) {
-    return `No state mapped for "${stateName}"`
+    return <Box position={'relative'} display={'flex'} height={'100vh'}>
+        <Box position={'absolute'} left={'50%'} top={'50%'} style={{transform: 'scale(20) translate(-50% -50% 0)'}}>
+            <CircularProgress/>
+        </Box>
+
+    </Box>
 }
 
 export function Game({ state, ...props }) {

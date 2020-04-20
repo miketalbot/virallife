@@ -11,6 +11,7 @@ export {homeMusic}
 
 export function playHome() {
     setTimeout(() => {
+        stopAll()
         play('home', true)
     }, 500)
 }

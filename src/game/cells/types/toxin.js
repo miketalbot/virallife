@@ -7,7 +7,7 @@ import {play} from '../../sounds'
 export const toxin = {
     name: 'Toxin',
     description: 'Releases a dose of poison killing surrounding cells',
-    cost: 300,
+    cost: 500,
     life: 120,
     color: 0xa6ef00,
     sprite: bad3,

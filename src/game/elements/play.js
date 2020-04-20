@@ -8,7 +8,7 @@ import {callFunction, types} from '../cells/types'
 import {updateSprite} from '../cells/process'
 import {getStructures} from '../data'
 import {Launcher} from '../cells/launcher'
-import {raise} from 'common/events'
+import {handle, raise} from 'common/events'
 import {useRefresh} from 'common/useRefresh'
 import {useLocalEvent} from 'common/use-event'
 import * as PIXI from 'pixi.js'
@@ -17,21 +17,36 @@ element(ParticleSurface)
 
 const BASE_X = -GAME_WIDTH / 2
 const BASE_Y = -GAME_HEIGHT / 2
-const GAME_LENGTH = 100//99000
+const GAME_LENGTH = 75000
+
+function getStructure(id) {
+    const info = {structure: null, id}
+    raise('get-structure', info)
+    return info.structure || getStructures()[0]
+}
+
+handle('get-structure', info => {
+    info.structure = info.structure || getStructures().find(i => i.id === info.id)
+})
 
 function ParticleSurface({structure}) {
     const {id = 0} = window.routeParams
     const surface = useRef(new Surface(GAME_WIDTH, GAME_HEIGHT))
-    structure = structure || getStructures()[+(id || 0)]
-    const budget = useRef(structure.parts.reduce((c, p) => c + (types[p.type].cost || 0), 0))
+    structure = structure || getStructure(id)
+    let ok = true
+    if (!structure) {
+        ok = false
+    }
+    const budget = useRef(ok && (structure.parts.reduce((c, p) => c + (types[p.type].cost || 0), 0) * 2.5) | 0)
     const start = useRef(Date.now() + GAME_LENGTH)
     const score = useRef(0)
     window.score = 0
     const list = []
     surface.current.paused = true
-    raise('particle-surface', surface.current, structure)
+    ok && raise('particle-surface', surface.current, structure)
     const parts = structure.parts
     useEffect(() => {
+        if (!ok) return
         const particles = surface.current.particles
         particles.startParticles()
         for (let part of parts) {
@@ -54,7 +69,10 @@ function ParticleSurface({structure}) {
     useLocalEvent('particle-destroyed', checkForDone)
     useLocalEvent('spend', checkForBudget)
     useLocalEvent('timeout', () => gameOver('timeout'))
-
+    if (!ok) {
+        window.location.href = '/'
+        return null
+    }
     return (
         <SurfaceContext.Provider value={surface.current}>
             <Container x={GAME_WIDTH / 2} y={GAME_HEIGHT / 2}>
@@ -94,7 +112,7 @@ function ParticleSurface({structure}) {
         const refresh = useRefresh()
         useTimeout(refresh, 1000)
         if (surface.current.paused) {
-            start.current = Date.now() + GAME_LENGTH
+            start.current = Date.now() + GAME_LENGTH + 1000
         }
         if (start.current - Date.now() < 0) {
             raise('timeout')

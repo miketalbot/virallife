@@ -7,6 +7,8 @@ import React, {createContext, useContext, useEffect, useRef} from 'react'
 import useMeasure from 'use-measure'
 import Box from '@material-ui/core/Box'
 import {useRefresh} from 'common/useRefresh'
+import {noop} from 'common/noop'
+import Button from '@material-ui/core/Button'
 
 export const ScaleContext = React.createContext(1)
 export const SurfaceContext = React.createContext(null)
@@ -219,4 +221,45 @@ export function toRad(deg) {
 export function mapToRgb(color) {
     const c = color.rgb()
     return (c[0] << 16) + (c[1] << 8) + c[2]
+}
+
+export function downloadObject(object, filename = 'file.json') {
+    var dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(object))
+    var dlAnchorElem = document.createElement('a')
+    dlAnchorElem.setAttribute('href', dataStr)
+    dlAnchorElem.setAttribute('download', filename)
+    dlAnchorElem.click()
+}
+
+export function UploadButton({onFile = noop, onRaw = noop, Component = Button, accept = '*', children, ...props}) {
+    return (
+        <Component {...props} onClick={prevent(selectFile)}>
+            {children}
+        </Component>
+    )
+
+    async function gotFile(e) {
+        const {target: {files: [file] = []} = {}} = e
+        if (file) {
+            if (onRaw(file)) {
+                return
+            }
+            const reader = new FileReader()
+            reader.onload = (e) => onFile(JSON.parse(e.target.result))
+            reader.readAsText(file, 'utf8')
+        }
+    }
+
+    function selectFile() {
+        const input = document.createElement('input')
+        input.type = 'file'
+        input.accept = accept
+        input.style.display = 'none'
+        input.onchange = gotFile
+        document.body.append(input)
+        setTimeout(() => {
+            input.click()
+            input.remove()
+        }, 200)
+    }
 }

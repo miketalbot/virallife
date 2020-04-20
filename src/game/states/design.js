@@ -9,6 +9,7 @@ import {StructureContext} from '../lib'
 import {Structures} from './components/structures'
 import {Design} from './components/editor'
 import {Preview} from './components/preview'
+import {Navigation} from '../../standard-nav'
 
 register('design', { Page })
 
@@ -19,14 +20,15 @@ function Page() {
     return (
         <StructureContext.Provider value={{ setCurrent, current, refresh, save, structures: structures.current }}>
             <MUIContainer>
+                <Navigation/>
                 <Grid container spacing={2} alignItems={'stretch'}>
                     <Grid item xs={12}>
                         <Box height={1} clone>
-                            <Structures />
+                            <Structures/>
                         </Box>
                     </Grid>
                     <Grid item md={6} xs={12}>
-                        <Design current={current} />
+                        <Design current={current}/>
                     </Grid>
                     <Grid item md={6} xs={12}>
                         <Preview current={current} />

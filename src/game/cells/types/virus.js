@@ -7,7 +7,7 @@ import {play} from '../../sounds'
 export const virus = {
     name: 'Virus',
     description: 'Tries to infect a nucleus',
-    cost: 500,
+    cost: 600,
     life: 60 * 3,
     notarget: true,
     color: 0x544622,
