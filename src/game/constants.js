@@ -50,4 +50,4 @@ export const presets = {
 export const CELL_SIZE = 80
 export const VELOCITY_MULT = 0.2
 export const randGen = new Random(MersenneTwister19937.seed(Date.now())).next
-export const R_SMOOTH = 2.0
+export const R_SMOOTH = .3

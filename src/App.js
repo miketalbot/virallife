@@ -1,16 +1,19 @@
 import React from 'react'
 import './App.css'
-import { Route, Switch } from 'react-router-dom'
-import { Game } from 'game'
+import {Route, Switch} from 'react-router-dom'
+import {Game} from 'game'
 
 function App() {
     return (
         <Switch>
+            <Route path={'/:state/:id'}>
+                <Game/>
+            </Route>
             <Route path={'/:state'}>
-                <Game />
+                <Game/>
             </Route>
             <Route path={'/'}>
-                <Game state={'start'} />
+                <Game state={'start'}/>
             </Route>
         </Switch>
     )

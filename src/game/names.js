@@ -8,6 +8,7 @@ const types = [
     'Your nightmare about the',
     'An exploration of the',
     'The discovery of the',
+    'The curse of the'
 ]
 
 const virals = [

@@ -52,6 +52,7 @@ export class Particles {
                 r2: Math.random()
             }
         }
+        p.alive = true
         p.x = -10000.0
         p.y = -10000.0
         p.vx = 0.0

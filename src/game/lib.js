@@ -10,9 +10,14 @@ import {useRefresh} from 'common/useRefresh'
 
 export const ScaleContext = React.createContext(1)
 export const SurfaceContext = React.createContext(null)
+export const RouteContext = React.createContext({})
 
 export function useScale() {
     return useContext(ScaleContext)
+}
+
+export function useRouteContext() {
+    return useContext(RouteContext)
 }
 
 export function useSurface() {
@@ -201,4 +206,13 @@ export function useTimeout(fn, timeout) {
 
 export function lerp(v0, v1, t) {
     return v0 * (1 - t) + v1 * t
+}
+
+export function toRad(deg) {
+    return (deg / 180) * Math.PI
+}
+
+export function mapToRgb(color) {
+    const c = color.rgb()
+    return (c[0] << 16) + (c[1] << 8) + c[2]
 }

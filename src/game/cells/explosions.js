@@ -4,14 +4,10 @@ import {circle, textures} from './sprites'
 import {ParticleContainer} from '@inlet/react-pixi'
 import {useLocalEvent} from 'common/use-event'
 import chroma from 'chroma-js'
-import {lerp} from '../lib'
+import {lerp, mapToRgb} from '../lib'
 import {noop} from 'common/noop'
 
-function mapToRgb(c) {
-    return (c[0] << 16) + (c[1] << 8) + c[0]
-}
-
-export function Explosions({api, size = 16384}) {
+export function Explosions({api, size = 3000}) {
     let next = 0
     const [particles] = useState(() =>
         Array.from({length: size}, () => {
@@ -25,7 +21,7 @@ export function Explosions({api, size = 16384}) {
     useLocalEvent('tick', (delta) => {
         for (let particle of particles) {
             if (particle.alive) {
-                particle.t += (delta * 1) / 60
+                particle.t += 1 / 60
                 if (particle.t > particle.life) {
                     particle.alive = false
                     particle.alpha = 0
@@ -34,7 +30,7 @@ export function Explosions({api, size = 16384}) {
                     particle.alpha = lerp(particle.startAlpha, particle.endAlpha, t)
                     particle.scale.set(lerp(particle.startScale, particle.endScale, t))
                     if (particle.startColor !== particle.endColor) {
-                        particle.tint = mapToRgb(particle.chroma(t).rgb())
+                        particle.tint = mapToRgb(particle.chroma(t))
                     }
                     let speed = lerp(particle.startSpeed, particle.endSpeed, t)
                     particle.x += particle.dx * speed
@@ -54,7 +50,7 @@ export function Explosions({api, size = 16384}) {
                 position: true,
                 rotation: false,
                 alpha: true,
-                uvs: false,
+                uvs: true,
             }}
         />
     )
@@ -81,7 +77,13 @@ export function Explosions({api, size = 16384}) {
         particle.tick = noop
 
         Object.assign(particle, opts)
-        particle.chroma = chroma.scale(`${particle.startColor}`, `${particle.endColor}`).mode('lrgb')
+        particle.chroma = chroma
+            .scale([
+                    `${particle.startColor.toString(16).padLeft(6, 0)}`,
+                    `${particle.endColor.toString(16).padLeft(6, 0)}`
+                ]
+            )
+            .mode('lrgb')
         particle.tint = particle.startColor
         return particle
     }

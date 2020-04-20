@@ -4,7 +4,7 @@ import {element, SurfaceContext} from '../lib'
 import {GAME_HEIGHT, GAME_WIDTH} from '../constants'
 import {Container} from '@inlet/react-pixi'
 import {textures} from '../cells/sprites'
-import {types} from '../cells/types'
+import {callFunction, types} from '../cells/types'
 import {updateSprite} from '../cells/process'
 import {getStructures} from '../data'
 import {Launcher} from '../cells/launcher'
@@ -16,8 +16,9 @@ const BASE_X = -GAME_WIDTH / 2
 const BASE_Y = -GAME_HEIGHT / 2
 
 function ParticleSurface({structure}) {
+    const {id = 0} = window.routeParams
     const surface = useRef(new Surface(GAME_WIDTH, GAME_HEIGHT))
-    structure = structure || getStructures()[1]
+    structure = structure || getStructures()[+(id || 0)]
     const parts = structure.parts
     useEffect(() => {
         const particles = surface.current.particles
@@ -27,9 +28,12 @@ function ParticleSurface({structure}) {
             p.x = part.x
             p.y = part.y
             p.type = part.type
-            p.sprite.texture = textures[types[p.type].sprite]
+            const typeDef = types[p.type]
+            p.life = typeDef.life
+            p.sprite.texture = textures[typeDef.sprite]
             p.sprite.alpha = 1
             updateSprite(p)
+            callFunction(p.type, 'init', p)
         }
         raise('additional-particles', particles, surface)
         surface.current.refresh()

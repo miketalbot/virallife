@@ -4,14 +4,14 @@ import {Container, Graphics, Sprite, Text} from '@inlet/react-pixi'
 import * as PIXI from 'pixi.js'
 import {useLocalEvent} from 'common/use-event'
 import {raise} from 'common/events'
-import {types} from './types'
+import {callFunction, types} from './types'
 import {deepOrange} from '@material-ui/core/colors'
 import {lerp, useScale, useSurface} from '../lib'
 import {updateSprite} from './process'
 import {textures} from './sprites'
 
 const launcherArea = new PIXI.Circle(0, 0, DIAMETER * 5)
-const typeList = ['phage', 'virus']
+const typeList = ['phage', 'toxin', 'virus']
 
 export function Launcher({x, y}) {
     const [type, setType] = useState(0)
@@ -107,9 +107,11 @@ export function Launcher({x, y}) {
                         p.y = cell.y + y
                         p.vx = dx * size
                         p.vy = dy * size
+                        p.life = currentType.life
                         p.sprite.alpha = 1
                         p.sprite.scale = 1
                         p.sprite.texture = textures[currentType.sprite]
+                        callFunction(p.type, 'init', p)
                         surface.refresh()
                         updateSprite(p)
                     }
@@ -189,8 +191,6 @@ export function Launcher({x, y}) {
             targetPt.x = targetPt.x / scale - GAME_WIDTH / 2 - x
             targetPt.y = targetPt.y / scale - y - GAME_HEIGHT / 2
 
-            // targetPt.x /= scale
-            // targetPt.y /= scale
         }
 
         function unpress() {

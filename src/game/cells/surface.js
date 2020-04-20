@@ -8,6 +8,7 @@ import {Trail} from './trail'
 import {DIAMETER} from '../constants'
 import {useLocalEvent} from 'common/use-event'
 import {Explosions} from './explosions'
+import {callFunction} from './types'
 
 export class Surface {
     list = []
@@ -61,13 +62,23 @@ export class Surface {
             this.collision.startCollision()
 
             for (let p of list) {
-                let tick = particleFunctions[p.tick]
-                tick && tick.call(this, this.rate, p)
+                if (p.alive) {
+                    let tick = particleFunctions[p.tick]
+                    tick && tick.call(this, this.rate, p)
+                }
             }
             this.collision.collisions((p, q) => {
                 let collision = particleFunctions[p.collide]
                 collision && collision.call(this, p, q)
             })
+            for (let p of list) {
+                if (p.alive) {
+                    callFunction(p.type, 'after', self, p)
+                } else {
+                    p.sprite.alpha = 0
+                }
+            }
+
         })
 
         const groups = this.particles.getGroups()
@@ -85,7 +96,7 @@ export class Surface {
         function refresh() {
             const groups = self.particles.getGroups()
             groups.forEach((group, type) => {
-                console.log(cache)
+
                 const container = cache[type]
                 if (container) {
                     group.forEach(item => {

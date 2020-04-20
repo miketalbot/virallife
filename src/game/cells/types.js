@@ -1,31 +1,40 @@
 import Prob from 'prob.js'
-import {fromHSV, resizeArray} from '../lib'
+import {fromHSV, mapToRgb, resizeArray} from '../lib'
 import {DIAMETER, presets, randGen} from '../constants'
 import cell from './sprites/red_cell.png'
 import nucleus from './sprites/good_cell01.png'
-import {bad1, images, virus} from './sprites'
+import {bad1, bad3, images, virus} from './sprites'
+import {noop} from 'common/noop'
+import {darkSparks, explode, smoke, sparks} from './explode'
+import chroma from 'chroma-js'
+import {raise} from 'common/events'
+
+const scale = chroma.scale()
 
 export const types = {
     nucleus: {
         good: true,
         name: 'Nucleus',
         cost: 600,
+        life: 150,
         description: 'The core of your structure',
         color: 0xffd990,
         sprite: nucleus,
         attract: {
             nucleus: -4.5,
-            defender: 0.4,
+            defender: 0.03,
             repel: -5,
-            virus: -0.1,
+            virus: -0.4,
             phage: -0.25,
+            toxin: -1
         },
         minR: {
             nucleus: DIAMETER * 4,
             defender: DIAMETER * 2,
             repel: DIAMETER * 6,
-            virus: DIAMETER,
+            virus: DIAMETER * 0.9,
             phage: DIAMETER,
+            toxin: DIAMETER
         },
         maxR: {
             nucleus: DIAMETER * 9,
@@ -33,6 +42,20 @@ export const types = {
             repel: DIAMETER * 8,
             virus: DIAMETER * 2,
             phage: DIAMETER * 4,
+            toxin: DIAMETER * 8
+        },
+        hit(surface, nucleus, points, source) {
+            if (source.type !== 'virus') return
+            nucleus.life -= points
+            if (nucleus.life <= 0) {
+                nucleus.alive = false
+                explode(surface.spawn, nucleus.x, nucleus.y, 0x605020, 40, 2.8, 3, 10)
+                raise('particle-destroyed', nucleus)
+                source.ticks = 100000000
+            }
+        },
+        after(surface, nucleus) {
+            nucleus.sprite.tint = mapToRgb(scale(0.7 - nucleus.life / types.nucleus.life))
         },
     },
     defender: {
@@ -40,14 +63,24 @@ export const types = {
         good: true,
         description: 'Shields a nucleus',
         cost: 20,
+        life: 30,
         color: 0xff0000,
         sprite: cell,
+        hit(surface, defender, points) {
+            defender.life -= points
+            if (defender.life <= 0) {
+                explode(surface.spawn, defender.x, defender.y, types.defender.color)
+                defender.alive = false
+                raise('particle-destroyed', defender)
+            }
+        },
         attract: {
             nucleus: 1.72,
             defender: -0.22,
             repel: -0.32,
-            virus: 2.5,
+            virus: 2.85,
             phage: -1,
+            toxin: -.5
         },
         minR: {
             nucleus: DIAMETER * 1.2,
@@ -55,13 +88,15 @@ export const types = {
             repel: DIAMETER * 6,
             virus: DIAMETER,
             phage: DIAMETER,
+            toxin: DIAMETER
         },
         maxR: {
             nucleus: DIAMETER * 9,
             defender: DIAMETER * 5,
             repel: DIAMETER * 8,
-            virus: DIAMETER * 3,
+            virus: DIAMETER * 6,
             phage: DIAMETER * 4,
+            toxin: DIAMETER * 3
         },
     },
     repel: {
@@ -75,40 +110,101 @@ export const types = {
         color: 0x544622,
         sprite: virus,
         attract: {
-            nucleus: 2.72,
-            defender: -0.42,
+            nucleus: 3.4,
+            defender: 0.225,
             repel: -0.32,
             virus: -2,
-            phage: 0.23,
+            phage: 0.03,
+            toxin: 0.05
         },
         minR: {
-            nucleus: DIAMETER * 1.2,
+            nucleus: DIAMETER * 0.9,
             defender: DIAMETER,
             repel: DIAMETER * 6,
             virus: DIAMETER,
             phage: DIAMETER,
+            toxin: DIAMETER
         },
         maxR: {
-            nucleus: DIAMETER * 9,
+            nucleus: DIAMETER * 14,
             defender: DIAMETER * 5,
             repel: DIAMETER * 6,
             virus: DIAMETER * 2,
             phage: DIAMETER * 4,
+            toxin: DIAMETER * 4
+        },
+        collide: {
+            nucleus({source, target, r, dx, dy, surface}) {
+                if (r < DIAMETER * 1.5) {
+                    callFunction(target.type, 'hit', surface, target, 1, source)
+                    darkSparks(surface.spawn, source.x + (dx * r) / 2, source.y + (dy * r) / 2, 0x404040, 10, 0.8, 6)
+                }
+            },
+        },
+        after(surface, virus) {
+            virus.ticks--
+            if (virus.ticks < 0) {
+                explode(surface.spawn, virus.x, virus.y, 0x605020, 20, 1.2, 3, 5)
+                virus.alive = false
+            }
+        },
+        init(virus) {
+            virus.ticks = 800
         },
     },
     phage: {
         name: 'Phage',
         description: 'Tries to kill shields',
         cost: 100,
-        life: 60 * 10,
+        life: 100,
         color: 0xf200ff,
         sprite: bad1,
+        earlyUpdate(surface, phage) {
+            phage.proximal = 0
+        },
+        hit(surface, phage, points) {
+            phage.life -= points
+
+            if (phage.life <= 0) {
+                phage.alive = false
+                explode(surface.spawn, phage.x, phage.y, types.phage.color)
+            }
+        },
+        after(surface, phage) {
+            if (phage.proximal > 1) {
+                callFunction('phage', 'hit', surface, phage, phage.proximal - 1)
+            }
+            phage.ticks--
+            if (phage.ticks <= 0) {
+                callFunction('phage', 'hit', surface, phage, 1000)
+            }
+        },
+        collide: {
+            defender({source, target, r, dx, dy, surface}) {
+                if (r < DIAMETER * 1.7) {
+                    source.proximal++
+                }
+                if (r < DIAMETER * 1.2) {
+                    callFunction(target.type, 'hit', surface, target, 1)
+                    sparks(
+                        surface.spawn,
+                        source.x + (dx * r) / 2,
+                        source.y + (dy * r) / 2,
+                        types[target.type].color,
+                        8,
+                        0.3,
+                        5
+                    )
+                }
+            },
+        },
         attract: {
             nucleus: 0.3,
             defender: 1.2,
             repel: -0.32,
-            virus: -0.5,
+            virus: -0.35,
             phage: -0.9,
+            toxin: -1.3
         },
         minR: {
             nucleus: DIAMETER * 1.2,
@@ -116,6 +212,7 @@ export const types = {
             repel: DIAMETER * 6,
             virus: DIAMETER,
             phage: DIAMETER,
+            toxin: DIAMETER
         },
         maxR: {
             nucleus: DIAMETER * 9,
@@ -123,11 +220,100 @@ export const types = {
             repel: DIAMETER * 6,
             virus: DIAMETER * 2,
             phage: DIAMETER * 6,
+            toxin: DIAMETER * 7
+        },
+        init(phage) {
+            phage.ticks = 500
+        },
+    },
+    toxin: {
+        name: 'Toxin',
+        description: 'Releases a dose of poison killing surrounding cells',
+        cost: 250,
+        life: 120,
+        color: 0xa6ef00,
+        sprite: bad3,
+        earlyUpdate(surface, toxin) {
+            toxin.proximal = toxin.proximal || []
+            toxin.proximal.length = 0
+            smoke(surface.spawn, toxin.x, toxin.y, types.toxin.color)
+        },
+        hit(surface, toxin, points) {
+            toxin.life -= points
+
+            if (toxin.life <= 0) {
+                toxin.alive = false
+                explode(surface.spawn, toxin.x, toxin.y, types.toxin.color)
+                for (let target of toxin.proximal) {
+                    explode(surface.spawn, target.x, target.y, types.toxin.color)
+                    callFunction(target.type, 'hit', surface, target, 350, toxin)
+                }
+            }
+        },
+        after(surface, toxin) {
+            if (toxin.proximal.length > 6) {
+                callFunction('toxin', 'hit', surface, toxin, 20)
+            } else if (toxin.proximal.length > 2) {
+                callFunction('toxin', 'hit', surface, toxin, 2)
+            }
+            toxin.ticks--
+            if (toxin.ticks <= 0) {
+                callFunction('toxin', 'hit', surface, toxin, 1000)
+            }
+        },
+        collide: {
+            defender({source, target, r, dx, dy, surface}) {
+                if (r < DIAMETER * 3) {
+                    source.proximal.push(target)
+                }
+            },
+        },
+        attract: {
+            nucleus: 0.3,
+            defender: 0.32,
+            repel: -0.32,
+            virus: -2.35,
+            toxin: -3.9,
+            phage: -4
+        },
+        minR: {
+            nucleus: DIAMETER * 1.2,
+            defender: DIAMETER,
+            repel: DIAMETER * 6,
+            virus: DIAMETER,
+            phage: DIAMETER,
+            toxin: DIAMETER
+        },
+        maxR: {
+            nucleus: DIAMETER * 7,
+            defender: DIAMETER * 14,
+            repel: DIAMETER * 6,
+            virus: DIAMETER * 2,
+            phage: DIAMETER * 6,
+            toxin: DIAMETER * 10
+        },
+        init(phage) {
+            phage.ticks = 500
         },
     },
 }
 export const typeIds = getTypeIds(types)
 export const allTypes = Object.entries(types).map(([key, v]) => ({...v, key}))
+
+const DUMMY = {}
+
+export function callFunctionSpecificToOtherType(type, otherType, fn, ...params) {
+    const typeDef = types[type] || DUMMY
+    const callSite = typeDef[fn] || DUMMY
+    const toCall = callSite[otherType] || callSite.default || noop
+    toCall(...params)
+}
+
+export function callFunction(type, fn, ...params) {
+    const typeDef = types[type] || DUMMY
+    const toCall = typeDef[fn] || noop
+    toCall(...params)
+}
 
 function getTypeIds(types) {
     const result = {}

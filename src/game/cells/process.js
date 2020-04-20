@@ -1,14 +1,11 @@
 import {DIAMETER, R_SMOOTH} from '../constants'
-import {types} from './types'
+import {callFunction, callFunctionSpecificToOtherType, types} from './types'
+import {toRad} from '../lib'
 
 export const particleFunctions = {
     move,
     collide,
-    write
-}
-
-function toRad(deg) {
-    return deg / 180 * Math.PI
+    write,
 }
 
 function write(delta, p) {
@@ -16,6 +13,7 @@ function write(delta, p) {
 }
 
 function move(delta, p) {
+    callFunction(p.type, 'earlyUpdate', this, p)
     p.rotation += p.speed * delta
     p.other += p.speed2 * delta
     let lx = p.x
@@ -32,10 +30,13 @@ function move(delta, p) {
     }
     const rot = toRad(p.other * 6)
     if (this.rate) {
-        p.sprite.scale.set(Math.sin(rot) * p.r1 * .1 + p.scale, Math.cos(rot + p.r1) * p.r2 * .1 + p.scale)
+        p.sprite.scale.set(Math.sin(rot) * p.r1 * 0.1 + p.scale, Math.cos(rot + p.r1) * p.r2 * 0.1 + p.scale)
     }
+    callFunction(p.type, 'update', this, p)
     updateSprite(p)
 }
+
+const info = {f: 0.0, r: 0.0, dx: 0, dy: 0, source: null, target: null, surface: null}
 
 function collide(p, q) {
     let dx = (q.x - p.x) | 0
@@ -46,7 +47,6 @@ function collide(p, q) {
     let type = types[p.type]
     const minR = type.minR[q.type] || DIAMETER
     const maxR = type.maxR[q.type] || DIAMETER
-
 
     if (r2 > maxR * maxR || r2 < 0.01) {
         return
@@ -66,8 +66,16 @@ function collide(p, q) {
     } else {
         f = R_SMOOTH * minR * (1.0 / (minR + R_SMOOTH) - 1.0 / (r + R_SMOOTH))
     }
-    p.vx = p.vx + f * dx
-    p.vy = p.vy + f * dy
+    info.f = f
+    info.r = r
+    info.dx = dx
+    info.dy = dy
+    info.target = q
+    info.source = p
+    info.surface = this
+    callFunctionSpecificToOtherType(p.type, q.type, 'collide', info)
+    p.vx = p.vx + info.f * info.dx
+    p.vy = p.vy + info.f * info.dy
 }
 
 export function updateSprite(p) {
