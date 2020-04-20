@@ -14,7 +14,7 @@ const launcherArea = new PIXI.Circle(0, 0, DIAMETER * 5)
 const typeList = ['phage', 'toxin', 'virus']
 let baseType = 0
 
-export function Launcher({x, y}) {
+export function Launcher({x, y, budgetRef}) {
     const [type, setType] = useState(baseType++ % 3)
     const [mode, setMode] = useState('off')
     const scale = useScale()
@@ -94,6 +94,12 @@ export function Launcher({x, y}) {
                     cell.scale.set(lerp(cell.scale.x, 0.7 + scaleMod, 0.1))
                     const d2 = cell.x * cell.x + cell.y * cell.y
                     if (d2 > 10000) {
+                        if (budgetRef.current < currentType.cost) {
+                            raise('over-spend', budgetRef.current)
+                            return
+                        }
+                        budgetRef.current -= currentType.cost
+                        raise('spend', budgetRef.current, currentType.cost)
                         let dx = targetPt.x - last.x
                         let dy = targetPt.y - last.y
                         let size = Math.sqrt(dx * dx + dy * dy) * 3.5

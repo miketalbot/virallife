@@ -58,6 +58,8 @@ export class Surface {
         const cache = {}
         const [containers] = useState([])
         useLocalEvent('tick', () => {
+            window.playSurface = this
+            if (this.paused) return
             this.emit = trail.current || noop
             this.spawn = explode.current || noop
             const list = this.particles.getParticles(this.list)

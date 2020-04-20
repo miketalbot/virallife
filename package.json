@@ -2,6 +2,7 @@
   "name": "virallife",
   "version": "0.1.0",
   "private": true,
+  "homepage": "ld46",
   "dependencies": {
     "@inlet/react-pixi": "^1.2.17",
     "@material-ui/core": "^4.9.11",
@@ -18,6 +19,7 @@
     "game": "file:src/game",
     "lodash": "^4.17.15",
     "pixi-particles": "^4.2.0",
+    "pixi-sound": "^3.0.4",
     "pixi.js": "^5.2.1",
     "prob.js": "^1.0.6",
     "prop-types": "^15.7.2",

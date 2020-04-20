@@ -1,8 +1,7 @@
 import React from 'react'
 import {game, RouteContext} from 'game/lib'
 import {useParams} from 'react-router-dom'
-import './states'
-import './elements'
+import useAsync from 'common/use-async'
 
 export function register(stateName, handler, opts) {
     const state = (game.states[stateName] = game.states[stateName] || {})
@@ -14,6 +13,10 @@ function Empty({stateName}) {
 }
 
 export function Game({ state, ...props }) {
+    useAsync(async () => {
+        await import('./states')
+        await import('./elements')
+    })
     const {state: paramState, ...params} = useParams()
 
     state = state || paramState

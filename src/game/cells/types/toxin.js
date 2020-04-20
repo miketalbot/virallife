@@ -2,11 +2,12 @@ import {bad3} from '../sprites'
 import {explode, smoke} from '../explode'
 import {DIAMETER} from '../../constants'
 import {callFunction, types} from '../types'
+import {play} from '../../sounds'
 
 export const toxin = {
     name: 'Toxin',
     description: 'Releases a dose of poison killing surrounding cells',
-    cost: 250,
+    cost: 300,
     life: 120,
     color: 0xa6ef00,
     sprite: bad3,
@@ -17,13 +18,14 @@ export const toxin = {
     },
     hit(surface, toxin, points) {
         toxin.life -= points
-
+        play('drop')
         if (toxin.life <= 0) {
+            play('hit')
             toxin.alive = false
             explode(surface.spawn, toxin.x, toxin.y, types.toxin.color)
             for (let target of toxin.proximal) {
                 explode(surface.spawn, target.x, target.y, types.toxin.color)
-                callFunction(target.type, 'hit', surface, target, 350, toxin)
+                callFunction(target.type, 'hit', surface, target, 300, toxin)
             }
         }
     },

@@ -2,12 +2,13 @@ import {bad1} from '../sprites'
 import {explode, sparks} from '../explode'
 import {DIAMETER} from '../../constants'
 import {callFunction, types} from '../types'
+import {play} from '../../sounds'
 
 export const phage = {
     name: 'Phage',
     description: 'Tries to kill shields',
-    cost: 100,
-    life: 100,
+    cost: 50,
+    life: 200,
     color: 0xf200ff,
     sprite: bad1,
     earlyUpdate(surface, phage) {
@@ -15,7 +16,7 @@ export const phage = {
     },
     hit(surface, phage, points) {
         phage.life -= points
-
+        play('drop')
         if (phage.life <= 0) {
             phage.alive = false
             explode(surface.spawn, phage.x, phage.y, types.phage.color)
@@ -23,10 +24,11 @@ export const phage = {
     },
     after(surface, phage) {
         if (phage.proximal > 1) {
-            callFunction('phage', 'hit', surface, phage, phage.proximal - 1)
+            callFunction('phage', 'hit', surface, phage, 1)
         }
         phage.ticks--
         if (phage.ticks <= 0) {
+            play('hit')
             callFunction('phage', 'hit', surface, phage, 1000)
         }
     },
@@ -62,7 +64,7 @@ export const phage = {
         tcell: DIAMETER * 8,
     },
     init(phage) {
-        phage.ticks = 500
+        phage.ticks = 700
     },
 }
 

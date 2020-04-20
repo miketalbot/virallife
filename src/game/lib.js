@@ -28,6 +28,10 @@ PIXI.Ticker.shared.add((delta) => {
     raise('tick', delta)
 })
 
+export function delay(time) {
+    return new Promise(resolve => setTimeout(resolve, time))
+}
+
 export const Emitter = PixiComponent('Emitter', {
     create() {
         return new PIXI.Container()

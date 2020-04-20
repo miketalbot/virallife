@@ -5,6 +5,7 @@ import {explode} from '../explode'
 import {raise} from 'common/events'
 import {mapToRgb} from '../../lib'
 import {types} from '../types'
+import {play} from '../../sounds'
 
 const scale = chroma.scale()
 export const nucleus = {
@@ -44,6 +45,7 @@ export const nucleus = {
     },
     hit(surface, nucleus, points, source) {
         if (source.type !== 'virus') return
+        play('mutate')
         nucleus.life -= points
         if (nucleus.life <= 0) {
             nucleus.alive = false
@@ -53,7 +55,7 @@ export const nucleus = {
         }
     },
     after(surface, nucleus) {
-        nucleus.life = Math.min(types.nucleus.life, nucleus.life + 0.03)
+        nucleus.life = Math.min(types.nucleus.life, nucleus.life + 0.07)
         nucleus.sprite.tint = mapToRgb(scale(0.7 - nucleus.life / types.nucleus.life))
     },
 }

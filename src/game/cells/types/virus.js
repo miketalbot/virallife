@@ -2,17 +2,19 @@ import {virusSprite} from '../sprites'
 import {DIAMETER} from '../../constants'
 import {darkSparks, explode} from '../explode'
 import {callFunction} from '../types'
+import {play} from '../../sounds'
 
 export const virus = {
     name: 'Virus',
     description: 'Tries to infect a nucleus',
-    cost: 400,
-    life: 60 * 10,
+    cost: 500,
+    life: 60 * 3,
+    notarget: true,
     color: 0x544622,
     sprite: virusSprite,
     attract: {
         nucleus: 5.4,
-        defender: 1.2,
+        defender: -0.03,
         repel: -0.32,
         virus: -2,
         phage: 0.03,
@@ -48,6 +50,7 @@ export const virus = {
     after(surface, virus) {
         virus.ticks--
         if (virus.ticks < 0) {
+            play('hit')
             explode(surface.spawn, virus.x, virus.y, 0x605020, 20, 1.2, 3, 5)
             virus.alive = false
         }

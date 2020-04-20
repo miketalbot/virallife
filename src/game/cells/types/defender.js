@@ -3,16 +3,18 @@ import {raise} from 'common/events'
 import {DIAMETER} from '../../constants'
 import {types} from '../types'
 import {cell1} from '../sprites/index'
+import {play} from '../../sounds'
 
 export const defender = {
     name: 'Shield',
     good: true,
     description: 'Shields a nucleus',
     cost: 20,
-    life: 30,
+    life: 25,
     color: 0xff0000,
     sprite: cell1,
     hit(surface, defender, points) {
+        play('drop')
         defender.life -= points
         if (defender.life <= 0) {
             explode(surface.spawn, defender.x, defender.y, types.defender.color)
