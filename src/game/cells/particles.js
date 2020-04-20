@@ -34,8 +34,9 @@ export class Particles {
         this.length = 0
     }
     getParticle() {
+        console.log('gp')
         let p = this.particles[this.length]
-        if (true) {
+        if (!p) {
             p = this.particles[this.length] = {
                 x: -10000.0,
                 y: -10000.0,
@@ -48,13 +49,18 @@ export class Particles {
                 tick: 'move',
                 collide: 'collide',
                 sprite: new Sprite(),
+                r1: Math.random(),
+                r2: Math.random()
             }
         }
         p.x = -10000.0
         p.y = -10000.0
         p.vx = 0.0
         p.vy = 0.0
-        p.speed = 0
+        p.other = Math.random() * 300
+        p.speed = Math.random() * .9 + .1
+        p.speed2 = Math.random() * .9 + .1
+        p.scale = .7
         p.sprite.scale.set(0.5)
         p.sprite.anchor.set(0.5)
         p.sprite.interactive = false

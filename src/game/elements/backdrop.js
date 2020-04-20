@@ -45,6 +45,7 @@ function Cell() {
         ref.current.x -= speed
         if (ref.current.x < -70) {
             ref.current.x = GAME_WIDTH + 100
+            ref.current.y = Math.random() * GAME_HEIGHT
         }
     })
     let scale = Math.random() * 1.3 + 0.2

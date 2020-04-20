@@ -1,12 +1,13 @@
 import React, {useState} from 'react'
 import {Sprite} from 'pixi.js'
 import {circle, textures} from './sprites'
-import {ParticleContainer, useTick} from '@inlet/react-pixi'
+import {ParticleContainer} from '@inlet/react-pixi'
+import {useLocalEvent} from 'common/use-event'
 
-export function Trail({ api, speed = 2.5 / 60, size = 2000 }) {
+export function Trail({api, speed = 2.5 / 60, size = 2000}) {
     let next = 0
     const [particles] = useState(() =>
-        Array.from({ length: size }, () => {
+        Array.from({length: size}, () => {
             let sprite = new Sprite(textures[circle])
             sprite.scale.set(1)
             sprite.alpha = 0
@@ -14,7 +15,7 @@ export function Trail({ api, speed = 2.5 / 60, size = 2000 }) {
             return sprite
         })
     )
-    useTick((delta) => {
+    useLocalEvent('tick', (delta) => {
         for (let particle of particles) {
             if (particle.t > 0.04) {
                 particle.t -= speed * delta

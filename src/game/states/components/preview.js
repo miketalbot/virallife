@@ -8,11 +8,12 @@ import Button from '@material-ui/core/Button'
 import React, {useEffect, useRef, useState} from 'react'
 import {Surface} from '../../cells/surface'
 import {GAME_HEIGHT, GAME_WIDTH} from '../../constants'
-import {Container, Stage, TilingSprite, useTick} from '@inlet/react-pixi'
+import {Container, Stage, TilingSprite} from '@inlet/react-pixi'
 import grid from '../../cells/sprites/grid.png'
 import {textures} from '../../cells/sprites'
 import {types} from '../../cells/types'
 import {updateSprite} from '../../cells/process'
+import {useLocalEvent} from 'common/use-event'
 
 export function Preview({ current }) {
     const localRefresh = useLocalRefresh()
@@ -64,7 +65,7 @@ function Previewer({ size, height = 300, structure, outerScale = 1 }) {
                     options={{ resolution: window.devicePixelRatio, autoDensity: true, transparent: true }}
                 >
                     <Container ref={scaleContainer} scale={outerScale} x={size.width / 2} y={height / 2}>
-                        <Container ref={container} interactive={true} x={-surface.width / 2} y={-surface.height / 2}>
+                        <Container ref={container} interactive={true}>
                             <TilingSprite
                                 x={-(surface.width / 2)}
                                 y={-(surface.height / 2)}
@@ -87,7 +88,7 @@ function Previewer({ size, height = 300, structure, outerScale = 1 }) {
     function Update() {
         let cache = ''
         const list = []
-        useTick(() => {
+        useLocalEvent('tick', () => {
             const key = JSON.stringify(structure.parts)
             if (key !== cache) {
                 particles.startParticles()
@@ -124,8 +125,8 @@ function Previewer({ size, height = 300, structure, outerScale = 1 }) {
             x /= c
             y /= c
             if (container.current) {
-                container.current.x = lerp(container.current.x, -surface.width / 2 - x, 0.03)
-                container.current.y = lerp(container.current.y, -surface.height / 2 - y, 0.03)
+                container.current.x = lerp(container.current.x, -x, 0.03)
+                container.current.y = lerp(container.current.y, -y, 0.03)
                 const xDisp = Math.max(1 / 1.4, (maxX - minX + 50) / size.width)
                 const yDisp = Math.max(1 / 1.4, (maxY - minY + 50) / height)
                 let d = Math.max(xDisp, yDisp)

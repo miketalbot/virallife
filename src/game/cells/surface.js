@@ -1,12 +1,13 @@
 import React, {useRef, useState} from 'react'
 import {Collision} from './collision'
 import {Particles} from './particles'
-import {Graphics, ParticleContainer, useTick} from '@inlet/react-pixi'
+import {Graphics, ParticleContainer} from '@inlet/react-pixi'
 import {particleFunctions} from './process'
 import {noop} from 'common/noop'
 import {Trail} from './trail'
 import {useRefresh} from 'common/useRefresh'
 import {DIAMETER} from '../constants'
+import {useLocalEvent} from 'common/use-event'
 
 export class Surface {
     list = []
@@ -18,7 +19,7 @@ export class Surface {
         this.trail = trail
         this.height = height | 0
         this.particles = new Particles()
-        this.collision = new Collision(140)
+        this.collision = new Collision(100)
         this.friction = 0.07
         this.particles.startParticles()
         count && this.particles.randomParticles(count, width, height)
@@ -49,7 +50,7 @@ export class Surface {
         this.refresh = useRefresh()
         const trail = useRef()
         const [containers] = useState([])
-        useTick(() => {
+        useLocalEvent('tick', () => {
             this.emit = trail.current || noop
             const list = this.particles.getParticles(this.list)
             this.collision.startCollision()
@@ -86,7 +87,7 @@ export class Surface {
         function drawOuter(g) {
             g.clear()
             g.lineStyle(DIAMETER, 0xffd900, 1)
-            g.drawRect(0, 0, self.width, self.height)
+            g.drawRect(-self.width / 2, -self.height / 2, self.width, self.height)
         }
     }
 }

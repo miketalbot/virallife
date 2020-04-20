@@ -10,13 +10,14 @@ import TextField from '@material-ui/core/TextField'
 import {bind} from 'common/set-from-event'
 import {Surface} from '../../cells/surface'
 import {GAME_HEIGHT, GAME_WIDTH} from '../../constants'
-import {Container, Stage, TilingSprite, useTick} from '@inlet/react-pixi'
+import {Container, Stage, TilingSprite} from '@inlet/react-pixi'
 import {types} from '../../cells/types'
 import grid from '../../cells/sprites/grid.png'
 import Typography from '@material-ui/core/Typography'
 import {CellSelector} from './cell-selector'
 import {textures} from '../../cells/sprites'
 import {updateSprite} from '../../cells/process'
+import {useLocalEvent} from 'common/use-event'
 
 export function Design({ current }) {
     const { refresh } = useStructure()
@@ -101,7 +102,7 @@ function Editor({ size, height = 300, structure, outerScale = 1 }) {
                         x={size.width / 2 - scrollPoint.current.x}
                         y={height / 2 - scrollPoint.current.y}
                     >
-                        <Container interactive={true} x={-surface.width / 2} y={-surface.height / 2}>
+                        <Container interactive={true}>
                             <TilingSprite
                                 x={-(surface.width / 2)}
                                 y={-(surface.height / 2)}
@@ -165,7 +166,7 @@ function Editor({ size, height = 300, structure, outerScale = 1 }) {
 
     function Update() {
         let count = 0
-        useTick(() => {
+        useLocalEvent('tick', () => {
             particles.startParticles()
             for (let part of structure.parts) {
                 let p = particles.getParticle()
