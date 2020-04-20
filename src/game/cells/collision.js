@@ -72,7 +72,7 @@ export class Collision {
         const sx = ((x - this.cellHalfSize) / this.cellSize) | 0
         const sy = ((y - this.cellHalfSize) / this.cellSize) | 0
         this.push(sx, sy, item)
-        this.push(sx + 1, sy + 1, item)
+        this.push(sx + 1, sy, item)
         this.push(sx, sy + 1, item)
         this.push(sx + 1, sy + 1, item)
     }

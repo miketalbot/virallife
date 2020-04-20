@@ -124,10 +124,10 @@ function Editor({ size, height = 300, structure, outerScale = 1 }) {
                 </Stage>
             </Box>
             <Box mt={1}>
-                <Typography color={'secondary'}> {cost} credits</Typography>
+                <Typography color={'secondary'}> {cost} credits (you have {7500 - cost} remaining)</Typography>
             </Box>
             <Box mt={1}>
-                <CellSelector good={true} value={cell} onChange={setCell} />
+                <CellSelector good={true} value={cell} structure={structure} onChange={setCell}/>
             </Box>
         </>
     )

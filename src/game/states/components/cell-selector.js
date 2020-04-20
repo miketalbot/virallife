@@ -26,17 +26,20 @@ const useStyles = makeStyles((theme) => {
     }
 })
 
-export function CellSelector({ value, onChange, good }) {
+export function CellSelector({value, onChange, structure, good}) {
     const classes = useStyles()
     let show = Object.entries(types)
         .filter(([, v]) => v.good === good)
-        .map(([key, v]) => Object.assign(v, { key }))
+        .map(([key, v]) => Object.assign(v, {key}))
     if (!value) {
         setTimeout(() => onChange(show.filter((f) => f.cost)[0]))
     }
+    const budget = structure.parts.reduce((c, p) => c + (types[p.type].cost || 0), 0)
+    const remaining = 7500 - budget
+
     return (
         <Box display={'flex'} flexWrap={'wrap'} alignItems={'stretch'} justifyContent={'center'}>
-            {show.map((type) => {
+            {show.filter(type => (type.cost || 0) <= remaining).map((type) => {
                 return (
                     <Box className={classes.item} key={type.key} mr={1} mb={1} width={1 / 4} minWidth={150}>
                         <Box height={1} clone>
