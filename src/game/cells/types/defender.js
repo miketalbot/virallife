@@ -1,8 +1,8 @@
-import cell from '../sprites/red_cell.png'
 import {explode} from '../explode'
 import {raise} from 'common/events'
 import {DIAMETER} from '../../constants'
 import {types} from '../types'
+import {cell1} from '../sprites/index'
 
 export const defender = {
     name: 'Shield',
@@ -11,7 +11,7 @@ export const defender = {
     cost: 20,
     life: 30,
     color: 0xff0000,
-    sprite: cell,
+    sprite: cell1,
     hit(surface, defender, points) {
         defender.life -= points
         if (defender.life <= 0) {
