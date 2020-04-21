@@ -24,7 +24,7 @@ export function Structures() {
             <CardContent>
                 <Box maxHeight={252} clone overflow={'auto'}>
                     <List>
-                        {structures.reverse().map((structure) => {
+                        {structures.map((structure) => {
                             return <Entry structure={structure} key={structure.id} />
                         })}
                     </List>
