@@ -1,9 +1,11 @@
 import React from 'react'
 import {game, RouteContext} from 'game/lib'
 import {useParams} from 'react-router-dom'
-import useAsync from 'common/use-async'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import Box from '@material-ui/core/Box'
+import './states'
+import './elements'
+import {useRefresh} from 'common/useRefresh'
 
 export function register(stateName, handler, opts) {
     const state = (game.states[stateName] = game.states[stateName] || {})
@@ -20,15 +22,16 @@ function Empty({stateName}) {
 }
 
 export function Game({ state, ...props }) {
-    useAsync(async () => {
-        await import('./states')
-        await import('./elements')
-    })
+    const refresh = useRefresh()
     const {state: paramState, ...params} = useParams()
 
     state = state || paramState
     const activeState = game.states[state] ?? {}
     const Render = activeState.Page || Empty
+    if (Render === Empty) {
+        setTimeout(refresh, 100)
+    }
+
     let rp = window.routeParams = {state, ...params}
     return (
         <RouteContext.Provider value={rp}>

@@ -25,11 +25,11 @@ export function Navigation() {
     </AppBar>
 
     function home() {
-        history.push('/')
+        history.push('/ld46/')
     }
 
     function design() {
-        history.push('/design')
+        history.push('/ld46/design')
     }
 
 }

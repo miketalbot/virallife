@@ -203,7 +203,7 @@ function GameRender({width, height, scale}) {
             await delay(3000)
             setStep(null)
             raise('game-over-complete', window.score, stars, structure.current, surface.current)
-            history.push('/')
+            history.push('/ld46/')
         }
     }
 

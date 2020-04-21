@@ -6,13 +6,13 @@ import {Game} from 'game'
 function App() {
     return (
         <Switch>
-            <Route path={'/:state/:id'}>
+            <Route path={'/ld46/:state/:id'}>
                 <Game/>
             </Route>
-            <Route path={'/:state'}>
+            <Route path={'/ld46/:state'}>
                 <Game/>
             </Route>
-            <Route path={'/'}>
+            <Route path={'/ld46/'}>
                 <Game state={'start'}/>
             </Route>
         </Switch>

@@ -113,7 +113,7 @@ function Page() {
                                     <CardHeader
                                         title={'Games'}
                                         action={
-                                            <Button onClick={() => history.push('/design')} color={'secondary'}>
+                                            <Button onClick={() => history.push('/ld46/design')} color={'secondary'}>
                                                 Design Your Own!
                                             </Button>
                                         }
@@ -178,7 +178,7 @@ function Page() {
 
     function playGame(id) {
         return function () {
-            history.push(`/play/${id}`)
+            history.push(`/ld46/play/${id}`)
         }
     }
 }
