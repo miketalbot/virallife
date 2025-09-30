@@ -17,7 +17,7 @@
     "common": "file:src/common",
     "decamelize": "^4.0.0",
     "game": "file:src/game",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.21",
     "pixi-particles": "^4.2.0",
     "pixi-sound": "^3.0.4",
     "pixi.js": "^5.2.1",
